@@ -26,6 +26,12 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core
     compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.core', version: '3.14.0'
+
+    // https://mvnrepository.com/artifact/net.sf.trove4j/trove4j
+    compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
+
+    // https://mvnrepository.com/artifact/com.github.mpkorstanje/simmetrics-core
+    compile group: 'com.github.mpkorstanje', name: 'simmetrics-core', version: '3.2.3'
 }
 
 // In this section you declare where to find the dependencies of your project
