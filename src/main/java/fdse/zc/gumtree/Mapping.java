@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 public class Mapping {
     private TreeNode first;
     private TreeNode second;

@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 public class Insert extends Action{
     private TreeNode node;
     private TreeNode parent;

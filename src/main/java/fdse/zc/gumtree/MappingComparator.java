@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 import java.util.*;
 
 public class MappingComparator implements Comparator<Mapping> {

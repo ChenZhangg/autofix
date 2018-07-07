@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 import org.simmetrics.StringMetrics;
 
 import java.util.ArrayDeque;

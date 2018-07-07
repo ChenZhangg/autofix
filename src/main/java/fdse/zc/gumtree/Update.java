@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 public class Update extends Action{
     private TreeNode node;
     private String label;

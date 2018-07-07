@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 public class Delete extends Action {
     private TreeNode node;
     public Delete(TreeNode node){

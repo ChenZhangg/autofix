@@ -16,6 +16,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
+import fdse.zc.gumtree.JdtVisitor;
+
 public class Diff{
   public static void main(String[] args) throws IOException, GitAPIException {
     File repoDir = new File("/Users/zhangchen/projects/projectanalysis/dynjs/.git");
@@ -40,6 +42,8 @@ public class Diff{
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
-    char[] charArray = new String(data, "ISO-8859-1");
+    char[] charArray = new String(data, "ISO-8859-1").toCharArray();
+    JdtVisitor visitor = new JdtVisitor();
+
   }
 }

@@ -1,3 +1,5 @@
+package fdse.zc.gumtree;
+
 import java.security.MessageDigest;
 
 public class HashGenerator {
