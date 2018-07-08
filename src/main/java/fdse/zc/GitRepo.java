@@ -3,7 +3,6 @@ package fdse.zc;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -15,7 +14,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 public class GitRepo{
   private String repoPath;
   private Repository repository;
-  public GitRepo(String repoPath){
+  public GitRepo(String repoPath) throws IOException{
     this.repoPath = repoPath;
     File repoDir = new File(repoPath);
     FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -23,18 +22,27 @@ public class GitRepo{
       repository = builder.setGitDir(repoDir).readEnvironment().findGitDir().build();
     } catch (IOException e) {
       System.out.println("Can not find repo: " + repoPath);
+      throw e;
     }  
   }
 
-  public char[] getFile(String commitSHA, String filePath){
+  public String getRepoPath(){
+    return repoPath;
+  }
+
+  public char[] getFile(String commitSHA, String filePath) throws Exception{
+    char[] data = null;
     try(RevWalk walk = new RevWalk(repository)){
-      String objectId = "4462b9831f3b003c224c20d5c5efa9304a2815fc";
+      String objectId = commitSHA;
       RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
       RevTree tree = commit.getTree();
-      TreeWalk treeWalk = TreeWalk.forPath(repository, "src/main/java/org/dynjs/runtime/GlobalObject.java", tree);
-      byte[] data = repository.open(treeWalk.getObjectId(0)).getBytes();
+      TreeWalk treeWalk = TreeWalk.forPath(repository, filePath, tree);
+      byte[] fileData = repository.open(treeWalk.getObjectId(0)).getBytes();
+      data = new String(fileData, "ISO-8859-1").toCharArray();
     } catch (Exception e){
-
+      System.out.println("Fail to get the file: " + filePath + " at commit" + commitSHA);
+      throw e;
     }
+    return data;
   }
 }

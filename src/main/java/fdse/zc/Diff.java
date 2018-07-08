@@ -24,6 +24,9 @@ import fdse.zc.gumtree.TreeUtils;
 
 public class Diff{
   public static void main(String[] args) throws IOException, GitAPIException {
+    GitRepo repo = new GitRepo("/Users/zhangchen/projects/projectanalysis/dynjs/.git");
+    char[] charArray = repo.getFile("4462b9831f3b003c224c20d5c5efa9304a2815fc", "src/main/java/org/dynjs/runtime/GlobalObject.java")
+
     File repoDir = new File("/Users/zhangchen/projects/projectanalysis/dynjs/.git");
     FileRepositoryBuilder builder = new FileRepositoryBuilder();
     try(Repository repository = builder.setGitDir(repoDir).readEnvironment().findGitDir().build()){
