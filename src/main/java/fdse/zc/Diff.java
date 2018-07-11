@@ -18,51 +18,65 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 
 import fdse.zc.gumtree.HashGenerator;
 import fdse.zc.gumtree.JdtVisitor;
+import fdse.zc.gumtree.Mapping;
+import fdse.zc.gumtree.MappingStore;
 import fdse.zc.gumtree.TreeContext;
 import fdse.zc.gumtree.TreeNode;
 import fdse.zc.gumtree.TreeUtils;
+import fdse.zc.gumtree.GreedyBottomUpMatcher;
+import fdse.zc.gumtree.GreedySubtreeMatcher;
 
 public class Diff{
-  public static void main(String[] args) throws IOException, GitAPIException {
-    GitRepo repo = new GitRepo("/Users/zhangchen/projects/projectanalysis/dynjs/.git");
-    char[] charArray = repo.getFile("4462b9831f3b003c224c20d5c5efa9304a2815fc", "src/main/java/org/dynjs/runtime/GlobalObject.java")
+  private ASTParser parser = null;
+  public static void main(String[] args) throws Exception {
+    Diff diff = new Diff();
+    String repoPath = "/Users/zhangchen/projects/projectanalysis/dynjs/.git";
+    String filePath = "src/main/java/org/dynjs/runtime/GlobalObject.java";
+    String preCommit = "29dcbb74a5ef857b88116e6b30eaaeddc70703a3";
+    String nextCommit = "4462b9831f3b003c224c20d5c5efa9304a2815fc";
+    diff.diffFile(repoPath, filePath, preCommit, nextCommit);
+  }
 
-    File repoDir = new File("/Users/zhangchen/projects/projectanalysis/dynjs/.git");
-    FileRepositoryBuilder builder = new FileRepositoryBuilder();
-    try(Repository repository = builder.setGitDir(repoDir).readEnvironment().findGitDir().build()){
-      System.out.println("Having repository: " + repository.getDirectory());
-      try (RevWalk walk = new RevWalk(repository)) {
-        String objectId = "4462b9831f3b003c224c20d5c5efa9304a2815fc";
-        RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
-        RevTree tree = commit.getTree();
-        TreeWalk treeWalk = TreeWalk.forPath(repository, "src/main/java/org/dynjs/runtime/GlobalObject.java", tree);
-        byte[] data = repository.open(treeWalk.getObjectId(0)).getBytes();
-        //System.out.println(new String(data, "ISO-8859-1"));
-        ASTParser parser = ASTParser.newParser(AST.JLS10);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        Map<String, String> options = JavaCore.getOptions();
-        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_10);
-        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_10);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-        options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-        parser.setCompilerOptions(options);
-        char[] charArray = new String(data, "ISO-8859-1").toCharArray();
-        JdtVisitor visitor = new JdtVisitor();
-        parser.setSource(charArray);
-        parser.createAST(null).accept(visitor);
-        TreeContext treeContext = visitor.getTreeContext();
-        TreeNode root = treeContext.getRoot();
-        TreeUtils treeUtils = new TreeUtils();
-        treeUtils.computeHeight(root);
-        treeUtils.computeSize(root);
-        treeUtils.computeDepth(root, -1);
-        treeUtils.computeId(root);
-        new HashGenerator().hash(root);
-        postOrder(root);
-      }
+  public void initParser(){
+    parser = ASTParser.newParser(AST.JLS10);
+    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+    Map<String, String> options = JavaCore.getOptions();
+    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_10);
+    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_10);
+    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+    options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
+    parser.setCompilerOptions(options);
+  }
+
+  public void diffFile(String repoPath, String filePath, String preCommit, String nextCommit) throws Exception{
+    initParser();
+    GitRepo repo = new GitRepo(repoPath);
+    char[] preCharArray = repo.getChars(preCommit, filePath);
+    char[] nextCharArray = repo.getChars(nextCommit, filePath);
+    TreeNode preRoot = getRoot(preCharArray);
+    TreeNode nextRoot = getRoot(nextCharArray);
+    MappingStore mappingStore = new MappingStore();
+    new GreedySubtreeMatcher(preRoot, nextRoot, mappingStore).match();
+    new GreedyBottomUpMatcher(preRoot, nextRoot, mappingStore).match();
+    for(Mapping m : mappingStore.asSet()){
+        System.out.println(m);
     }
   }
 
+  public TreeNode getRoot(char[] charArray){
+    JdtVisitor visitor = new JdtVisitor();
+    parser.setSource(charArray);
+    parser.createAST(null).accept(visitor);
+    TreeContext treeContext = visitor.getTreeContext();
+    TreeNode root = treeContext.getRoot();
+    TreeUtils treeUtils = new TreeUtils();
+    treeUtils.computeHeight(root);
+    treeUtils.computeSize(root);
+    treeUtils.computeDepth(root, -1);
+    treeUtils.computeId(root);
+    new HashGenerator().hash(root);
+    return root;
+  }
   public static void postOrder(TreeNode root){
     for(TreeNode node:root.getPreOrderTreeNodeList()){
         System.out.println(node);

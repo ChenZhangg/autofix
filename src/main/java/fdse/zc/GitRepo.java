@@ -30,7 +30,7 @@ public class GitRepo{
     return repoPath;
   }
 
-  public char[] getFile(String commitSHA, String filePath) throws Exception{
+  public char[] getChars(String commitSHA, String filePath) throws Exception{
     char[] data = null;
     try(RevWalk walk = new RevWalk(repository)){
       String objectId = commitSHA;
