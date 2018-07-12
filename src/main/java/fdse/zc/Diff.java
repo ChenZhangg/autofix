@@ -2,6 +2,7 @@ package fdse.zc;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.JavaCore;
@@ -23,6 +24,8 @@ import fdse.zc.gumtree.MappingStore;
 import fdse.zc.gumtree.TreeContext;
 import fdse.zc.gumtree.TreeNode;
 import fdse.zc.gumtree.TreeUtils;
+import fdse.zc.gumtree.Action;
+import fdse.zc.gumtree.ActionGenerator;
 import fdse.zc.gumtree.GreedyBottomUpMatcher;
 import fdse.zc.gumtree.GreedySubtreeMatcher;
 
@@ -48,18 +51,24 @@ public class Diff{
     parser.setCompilerOptions(options);
   }
 
-  public void diffFile(String repoPath, String filePath, String preCommit, String nextCommit) throws Exception{
+  public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
     initParser();
     GitRepo repo = new GitRepo(repoPath);
-    char[] preCharArray = repo.getChars(preCommit, filePath);
-    char[] nextCharArray = repo.getChars(nextCommit, filePath);
-    TreeNode preRoot = getRoot(preCharArray);
-    TreeNode nextRoot = getRoot(nextCharArray);
+    char[] oldCharArray = repo.getChars(oldCommit, filePath);
+    char[] newCharArray = repo.getChars(newCommit, filePath);
+    TreeNode oldRoot = getRoot(oldCharArray);
+    TreeNode newRoot = getRoot(newCharArray);
     MappingStore mappingStore = new MappingStore();
-    new GreedySubtreeMatcher(preRoot, nextRoot, mappingStore).match();
-    new GreedyBottomUpMatcher(preRoot, nextRoot, mappingStore).match();
+    new GreedySubtreeMatcher(oldRoot, newRoot, mappingStore).match();
+    new GreedyBottomUpMatcher(oldRoot, newRoot, mappingStore).match();
     for(Mapping m : mappingStore.asSet()){
-        System.out.println(m);
+        //System.out.println(m);
+    }
+    ActionGenerator g = new ActionGenerator(oldRoot, newRoot, mappingStore);
+    g.generate();
+    List<Action> actions = g.getActions();
+    for(Action a : actions){
+      System.out.println(a.toString());
     }
   }
 

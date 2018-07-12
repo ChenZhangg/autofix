@@ -116,7 +116,7 @@ public class ActionGenerator {
         List<Mapping> lcs = lcs(s1, s2);
 
         for (Mapping m : lcs) {
-            System.out.println("s1 size" + s1.size() + "M: " + m);
+            //System.out.println("s1 size" + s1.size() + "M: " + m);
             oldInOrder.add(m.getFirst());
             newInOrder.add(m.getSecond());
         }
@@ -125,8 +125,8 @@ public class ActionGenerator {
             for (TreeNode b: s2 ) {
                 if (mappingStore.has(a, b)) {
                     if (!lcs.contains(new Mapping(a, b))) {
-                        System.out.println("W: " + w);
-                        System.out.println("X: " + x);
+                        //System.out.println("W: " + w);
+                        //System.out.println("X: " + x);
                         int k = findPos(b);
                         Action mv = new Move(oldRootMap.get(a.getId()), oldRootMap.get(w.getId()), k);
                         actions.add(mv);
