@@ -14,15 +14,15 @@ public class ZsMatcher extends Matcher{
     private double[][] treeDist;
     private double[][] forestDist;
 
-    private static TreeNode getFirstLeaf(TreeNode t) {
-        TreeNode current = t;
+    private static JavaTree getFirstLeaf(JavaTree t) {
+        JavaTree current = t;
         while (!current.isLeaf())
             current = current.getChild(0);
 
         return current;
     }
 
-    public ZsMatcher(TreeNode src, TreeNode dst, MappingStore store) {
+    public ZsMatcher(JavaTree src, JavaTree dst, MappingStore store) {
         super(src, dst, store);
         this.zsSrc = new ZsTree(src);
         this.zsDst = new ZsTree(dst);
@@ -112,8 +112,8 @@ public class ZsMatcher extends Matcher{
                     if ((zsSrc.lld(row) - 1 == zsSrc.lld(lastRow) - 1)
                             && (zsDst.lld(col) - 1 == zsDst.lld(lastCol) - 1)) {
                         // if both subforests are trees, map nodes
-                        TreeNode tSrc = zsSrc.tree(row);
-                        TreeNode tDst = zsDst.tree(col);
+                        JavaTree tSrc = zsSrc.tree(row);
+                        JavaTree tDst = zsDst.tree(col);
                         if (tSrc.getNodeTypeNumber() == tDst.getNodeTypeNumber())
                             addMapping(tSrc, tDst);
                         else
@@ -134,15 +134,15 @@ public class ZsMatcher extends Matcher{
         }
     }
 
-    private double getDeletionCost(TreeNode n) {
+    private double getDeletionCost(JavaTree n) {
         return 1D;
     }
 
-    private double getInsertionCost(TreeNode n) {
+    private double getInsertionCost(JavaTree n) {
         return 1D;
     }
 
-    private double getUpdateCost(TreeNode n1, TreeNode n2) {
+    private double getUpdateCost(JavaTree n1, JavaTree n2) {
         if (n1.getNodeTypeNumber() == n2.getNodeTypeNumber())
             if ("".equals(n1.getNodeLabel()) || "".equals(n2.getNodeLabel()))
                 return 1D;
@@ -162,20 +162,20 @@ public class ZsMatcher extends Matcher{
 
         private int[] llds; // llds[i] stores the postorder-ID of the
         // left-most leaf descendant of the i-th node in postorder
-        private TreeNode[] labels; // labels[i] is the tree of the i-th node in postorder
+        private JavaTree[] labels; // labels[i] is the tree of the i-th node in postorder
 
         private int[] kr;
 
-        private ZsTree(TreeNode t) {
+        private ZsTree(JavaTree t) {
             this.start = 0;
             this.nodeCount = t.getSize();
             this.leafCount = 0;
             this.llds = new int[start + nodeCount];
-            this.labels = new TreeNode[start + nodeCount];
+            this.labels = new JavaTree[start + nodeCount];
 
             int idx = 1;
-            Map<TreeNode,Integer> tmpData = new HashMap<>();
-            for (TreeNode n: t.getPostOrderTreeNodeList()) {
+            Map<JavaTree,Integer> tmpData = new HashMap<>();
+            for (JavaTree n: t.getPostOrderTreeNodeList()) {
                 tmpData.put(n, idx);
                 this.setITree(idx, n);
                 this.setLld(idx,  tmpData.get(ZsMatcher.getFirstLeaf(n)));
@@ -187,7 +187,7 @@ public class ZsMatcher extends Matcher{
             setKeyRoots();
         }
 
-        public void setITree(int i, TreeNode tree) {
+        public void setITree(int i, JavaTree tree) {
             labels[i + start - 1] = tree;
             if (nodeCount < i)
                 nodeCount = i;
@@ -207,7 +207,7 @@ public class ZsMatcher extends Matcher{
             return llds[i + start - 1] - start + 1;
         }
 
-        public TreeNode tree(int i) {
+        public JavaTree tree(int i) {
             return labels[i + start - 1];
         }
 

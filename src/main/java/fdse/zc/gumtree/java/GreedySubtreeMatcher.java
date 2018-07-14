@@ -3,7 +3,7 @@ package fdse.zc.gumtree.java;
 import java.util.*;
 
 public class GreedySubtreeMatcher extends Matcher{
-    public GreedySubtreeMatcher(TreeNode oldRoot, TreeNode newRoot, MappingStore mappingStore) {
+    public GreedySubtreeMatcher(JavaTree oldRoot, JavaTree newRoot, MappingStore mappingStore) {
         super(oldRoot, newRoot, mappingStore);
     }
 
@@ -25,16 +25,16 @@ public class GreedySubtreeMatcher extends Matcher{
                 popHigherTree(oldHeightIndexedPriorityList, newHeightIndexedPriorityList);
             }
 
-            ArrayList<TreeNode> oldCurrentHeightNodeList = oldHeightIndexedPriorityList.pop();
-            ArrayList<TreeNode> newCurrentHeightNodeList = newHeightIndexedPriorityList.pop();
+            ArrayList<JavaTree> oldCurrentHeightNodeList = oldHeightIndexedPriorityList.pop();
+            ArrayList<JavaTree> newCurrentHeightNodeList = newHeightIndexedPriorityList.pop();
 
             boolean[] marksForOldNodeList = new boolean[oldCurrentHeightNodeList.size()];
             boolean[] marksForNewNodeList = new boolean[newCurrentHeightNodeList.size()];
 
             for (int i = 0; i < oldCurrentHeightNodeList.size(); i++) {
                 for (int j = 0; j < newCurrentHeightNodeList.size(); j++) {
-                    TreeNode oldNode = oldCurrentHeightNodeList.get(i);
-                    TreeNode newNode = newCurrentHeightNodeList.get(j);
+                    JavaTree oldNode = oldCurrentHeightNodeList.get(i);
+                    JavaTree newNode = newCurrentHeightNodeList.get(j);
 
                     if (oldNode.isIsomorphicTo(newNode)) {
                         multiMappingStore.link(oldNode, newNode);
@@ -64,15 +64,15 @@ public class GreedySubtreeMatcher extends Matcher{
     public void filterMappings(MultiMappingStore multiMappingStore) {
         // Select unique mappingStore first and extract ambiguous mappingStore.
         ArrayList<Mapping> ambiguousList = new ArrayList<>();
-        HashSet<TreeNode> ignored = new HashSet<>();
-        for (TreeNode old : multiMappingStore.getOldMapKeySet()) {
+        HashSet<JavaTree> ignored = new HashSet<>();
+        for (JavaTree old : multiMappingStore.getOldMapKeySet()) {
             if (multiMappingStore.isMappingUnique(old)) {
                 addMappingRecursively(old, multiMappingStore.getNewNodeSet(old).iterator().next());
             } else if (!ignored.contains(old)) {
-                Set<TreeNode> aNews = multiMappingStore.getNewNodeSet(old);
-                Set<TreeNode> aOlds = multiMappingStore.getOldNodeSet(multiMappingStore.getNewNodeSet(old).iterator().next());
-                for (TreeNode aold : aOlds) {
-                    for (TreeNode anew : aNews) {
+                Set<JavaTree> aNews = multiMappingStore.getNewNodeSet(old);
+                Set<JavaTree> aOlds = multiMappingStore.getOldNodeSet(multiMappingStore.getNewNodeSet(old).iterator().next());
+                for (JavaTree aold : aOlds) {
+                    for (JavaTree anew : aNews) {
                         ambiguousList.add(new Mapping(aold, anew));
                     }
                 }
@@ -81,15 +81,15 @@ public class GreedySubtreeMatcher extends Matcher{
         }
 
         // Rank the mappingStore by score.
-        Set<TreeNode> oldIgnored = new HashSet<>();
-        Set<TreeNode> newIgnored = new HashSet<>();
+        Set<JavaTree> oldIgnored = new HashSet<>();
+        Set<JavaTree> newIgnored = new HashSet<>();
         Collections.sort(ambiguousList, new MappingComparator(ambiguousList, mappingStore, Math.max(oldRoot.getSize(), newRoot.getSize())));
 
         // Select the best ambiguous mappingStore
         retainBestMapping(ambiguousList, oldIgnored, newIgnored);
     }
 
-    protected void retainBestMapping(ArrayList<Mapping> ambiguousList, Set<TreeNode> oldIgnored, Set<TreeNode> newIgnored) {
+    protected void retainBestMapping(ArrayList<Mapping> ambiguousList, Set<JavaTree> oldIgnored, Set<JavaTree> newIgnored) {
         while (ambiguousList.size() > 0) {
             Mapping mapping = ambiguousList.remove(0);
             if (!(oldIgnored.contains(mapping.getFirst()) || newIgnored.contains(mapping.getSecond()))) {

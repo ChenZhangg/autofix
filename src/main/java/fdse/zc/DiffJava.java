@@ -16,7 +16,7 @@ import fdse.zc.gumtree.java.JdtVisitor;
 import fdse.zc.gumtree.java.Mapping;
 import fdse.zc.gumtree.java.MappingStore;
 import fdse.zc.gumtree.java.TreeContext;
-import fdse.zc.gumtree.java.TreeNode;
+import fdse.zc.gumtree.java.JavaTree;
 import fdse.zc.gumtree.java.TreeUtils;
 
 
@@ -48,8 +48,8 @@ public class DiffJava{
     GitRepo repo = new GitRepo(repoPath);
     char[] oldCharArray = repo.getChars(oldCommit, filePath);
     char[] newCharArray = repo.getChars(newCommit, filePath);
-    TreeNode oldRoot = getRoot(oldCharArray);
-    TreeNode newRoot = getRoot(newCharArray);
+    JavaTree oldRoot = getRoot(oldCharArray);
+    JavaTree newRoot = getRoot(newCharArray);
     MappingStore mappingStore = new MappingStore();
     new GreedySubtreeMatcher(oldRoot, newRoot, mappingStore).match();
     new GreedyBottomUpMatcher(oldRoot, newRoot, mappingStore).match();
@@ -64,12 +64,12 @@ public class DiffJava{
     }
   }
 
-  public TreeNode getRoot(char[] charArray){
+  public JavaTree getRoot(char[] charArray){
     JdtVisitor visitor = new JdtVisitor();
     parser.setSource(charArray);
     parser.createAST(null).accept(visitor);
     TreeContext treeContext = visitor.getTreeContext();
-    TreeNode root = treeContext.getRoot();
+    JavaTree root = treeContext.getRoot();
     TreeUtils treeUtils = new TreeUtils();
     treeUtils.computeHeight(root);
     treeUtils.computeSize(root);
@@ -78,10 +78,10 @@ public class DiffJava{
     new HashGenerator().hash(root);
     return root;
   }
-  public static void postOrder(TreeNode root){
-    for(TreeNode node:root.getPreOrderTreeNodeList()){
+  public static void postOrder(JavaTree root){
+    for(JavaTree node:root.getPreOrderTreeNodeList()){
         System.out.println(node);
-        TreeNode parent = node.getParent();
+        JavaTree parent = node.getParent();
         if(parent == null)
             System.out.println("parent: null");
         else

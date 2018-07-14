@@ -1,8 +1,8 @@
 package fdse.zc.gumtree.java;
 
 public class Delete extends Action {
-    private TreeNode node;
-    public Delete(TreeNode node){
+    private JavaTree node;
+    public Delete(JavaTree node){
         this.node = node;
     }
 

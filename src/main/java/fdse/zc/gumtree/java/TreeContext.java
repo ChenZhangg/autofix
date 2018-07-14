@@ -7,16 +7,16 @@ public class TreeContext {
 
     private Map<Integer, String> typeNameMap = new HashMap<>();
 
-    private TreeNode root;
+    private JavaTree root;
 
-    public void setRoot(TreeNode root) {
+    public void setRoot(JavaTree root) {
         this.root = root;
     }
 
-    public TreeNode getRoot() {return root;}
-    public TreeNode createTreeNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
+    public JavaTree getRoot() {return root;}
+    public JavaTree createTreeNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
         registerTypeName(nodeTypeNumber, nodeTypeName);
-        return new TreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+        return new JavaTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
     }
 
     protected void registerTypeName(int nodeTypeNumber, String nodeTypeName) {

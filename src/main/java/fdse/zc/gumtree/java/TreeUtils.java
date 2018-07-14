@@ -2,7 +2,7 @@ package fdse.zc.gumtree.java;
 
 public class TreeUtils {
     public int id = 0;
-    public int computeSize(TreeNode root) {
+    public int computeSize(JavaTree root) {
         int size = 1;
         if(root.isLeaf()){
             root.setSize(size);
@@ -10,7 +10,7 @@ public class TreeUtils {
         }
 
         int tempSize = 0;
-        for(TreeNode node : root.getChildren()){
+        for(JavaTree node : root.getChildren()){
             tempSize = computeSize(node);
             size += tempSize;
         }
@@ -18,17 +18,17 @@ public class TreeUtils {
         return size;
     }
 
-    public void computeDepth(TreeNode root, int parentDepth) {
+    public void computeDepth(JavaTree root, int parentDepth) {
         int depth = parentDepth + 1;
         root.setDepth(depth);
 
-        for(TreeNode node : root.getChildren()){
+        for(JavaTree node : root.getChildren()){
             computeDepth(node, depth);
         }
     }
 
 
-    public int computeHeight(TreeNode root) {
+    public int computeHeight(JavaTree root) {
         int maxHeight = 0;
         if (root.isLeaf()) {
             root.setHeight(maxHeight);
@@ -36,7 +36,7 @@ public class TreeUtils {
         }
 
         int height = 0;
-        for (TreeNode node : root.getChildren()) {
+        for (JavaTree node : root.getChildren()) {
             height = computeHeight(node);
             if (height > maxHeight) maxHeight = height;
         }
@@ -45,8 +45,8 @@ public class TreeUtils {
         return maxHeight;
     }
 
-    public void computeId(TreeNode root) {
-        for (TreeNode node : root.getChildren()) {
+    public void computeId(JavaTree root) {
+        for (JavaTree node : root.getChildren()) {
             computeId(node);
         }
         root.setId(id++);

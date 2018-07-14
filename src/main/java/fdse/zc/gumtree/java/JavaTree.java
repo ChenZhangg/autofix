@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TreeNode {
+import fdse.zc.gumtree.ITree;
+
+public class JavaTree implements ITree {
     public static final String NO_LABEL = "";
 
     private int nodeTypeNumber;
@@ -17,10 +19,10 @@ public class TreeNode {
     private int depth;
     private int id;
     private int hash;
-    private TreeNode parent;
-    private List<TreeNode> children = new ArrayList<>();;
+    private JavaTree parent;
+    private List<JavaTree> children = new ArrayList<>();;
 
-    public TreeNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
+    public JavaTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
         this.nodeTypeNumber = nodeTypeNumber;
         this.nodeTypeName = nodeTypeName;
         this.nodeLabel = (nodeLabel == null) ? NO_LABEL : nodeLabel;
@@ -28,7 +30,7 @@ public class TreeNode {
         this.length = length;
     }
 
-    private TreeNode(TreeNode other) {
+    private JavaTree(JavaTree other) {
         this.nodeTypeNumber = other.getNodeTypeNumber();
         this.nodeTypeName = other.getNodeTypeName();
         this.nodeLabel = other.getNodeLabel();
@@ -40,15 +42,15 @@ public class TreeNode {
         this.hash = other.getHash();
         this.depth = other.getDepth();
         this.id = other.getId();
-        this.children = new ArrayList<TreeNode>();
+        this.children = new ArrayList<JavaTree>();
     }
 
-    private TreeNode(){
+    private JavaTree(){
 
     }
 
-    public static TreeNode fakeParentTreeNode(TreeNode child){
-        TreeNode parent = new TreeNode();
+    public static JavaTree fakeParentTreeNode(JavaTree child){
+        JavaTree parent = new JavaTree();
         if(child != null){
             parent.addChild(child);
             child.setParent(parent);
@@ -56,65 +58,65 @@ public class TreeNode {
         return parent;
     }
 
-    public TreeNode deepCopy() {
-        TreeNode copy = new TreeNode(this);
-        for (TreeNode child : getChildren())
+    public JavaTree deepCopy() {
+        JavaTree copy = new JavaTree(this);
+        for (JavaTree child : getChildren())
             copy.addChild(child.deepCopy());
         return copy;
     }
 
-    public void addChild(TreeNode child) {
+    public void addChild(JavaTree child) {
         children.add(child);
         child.setParent(this);
     }
 
-    public void setParentAndUpdateChildren(TreeNode parent) {
+    public void setParentAndUpdateChildren(JavaTree parent) {
         this.parent = parent;
         if (this.parent != null)
             parent.getChildren().add(this);
     }
 
-    public ArrayList<TreeNode> getPreOrderTreeNodeList() {
-        ArrayList<TreeNode> list = new ArrayList<>();
+    public ArrayList<JavaTree> getPreOrderTreeNodeList() {
+        ArrayList<JavaTree> list = new ArrayList<>();
         getPreOrderTreeNodeList(this, list);
         return list;
     }
 
-    public void getPreOrderTreeNodeList(TreeNode node, ArrayList<TreeNode> list) {
+    public void getPreOrderTreeNodeList(JavaTree node, ArrayList<JavaTree> list) {
         list.add(node);
         if(node.isLeaf()) {
             return;
         }
-        for(TreeNode child : node.getChildren()){
+        for(JavaTree child : node.getChildren()){
             getPreOrderTreeNodeList(child, list);
         }
     }
 
-    public ArrayList<TreeNode> getPostOrderTreeNodeList() {
-        ArrayList<TreeNode> list = new ArrayList<>();
+    public ArrayList<JavaTree> getPostOrderTreeNodeList() {
+        ArrayList<JavaTree> list = new ArrayList<>();
         getPostOrderTreeNodeList(this, list);
         return list;
     }
 
-    public void getPostOrderTreeNodeList(TreeNode node, ArrayList<TreeNode> list) {
-        for(TreeNode child : node.getChildren()){
+    public void getPostOrderTreeNodeList(JavaTree node, ArrayList<JavaTree> list) {
+        for(JavaTree child : node.getChildren()){
             getPostOrderTreeNodeList(child, list);
         }
         list.add(node);
     }
 
-    public ArrayList<TreeNode> getDescendants() {
-        ArrayList<TreeNode> list = getPreOrderTreeNodeList();
+    public ArrayList<JavaTree> getDescendants() {
+        ArrayList<JavaTree> list = getPreOrderTreeNodeList();
         list.remove(0);
         return list;
     }
 
-    public ArrayList<TreeNode> getBreadthFirstTreeNodeList(){
-        ArrayList<TreeNode> list = new ArrayList<>();
-        ArrayList<TreeNode> temp = new ArrayList<>();
+    public ArrayList<JavaTree> getBreadthFirstTreeNodeList(){
+        ArrayList<JavaTree> list = new ArrayList<>();
+        ArrayList<JavaTree> temp = new ArrayList<>();
         temp.add(this);
         while (temp.size() > 0){
-            TreeNode node = temp.remove(0);
+            JavaTree node = temp.remove(0);
             list.add(node);
             temp.addAll(node.getChildren());
         }
@@ -201,31 +203,31 @@ public class TreeNode {
         return hash;
     }
 
-    public void setParent(TreeNode parent) {
+    public void setParent(JavaTree parent) {
         this.parent = parent;
     }
 
-    public TreeNode getParent() {
+    public JavaTree getParent() {
         return parent;
     }
 
-    public TreeNode getChild(int position) {
+    public JavaTree getChild(int position) {
         return getChildren().get(position);
     }
 
-    public int getChildPosition(TreeNode child) {
+    public int getChildPosition(JavaTree child) {
         return getChildren().indexOf(child);
     }
 
     public int getPositionInParent(){
-        TreeNode parent = getParent();
+        JavaTree parent = getParent();
         if(parent == null)
             return -1;
         else
             return parent.getChildPosition(this);
     }
 
-    public List<TreeNode> getChildren() {
+    public List<JavaTree> getChildren() {
         return children;
     }
 
@@ -237,11 +239,11 @@ public class TreeNode {
         return parent == null;
     }
 
-    public boolean isSameType(TreeNode node) {
+    public boolean isSameType(JavaTree node) {
         return getNodeTypeNumber() == node.getNodeTypeNumber();
     }
 
-    public boolean isIsomorphicTo(TreeNode node) {
+    public boolean isIsomorphicTo(JavaTree node) {
         if (this.getHash() != node.getHash()) {
             return false;
         } else {
@@ -261,7 +263,7 @@ public class TreeNode {
         StringBuilder b = new StringBuilder();
         b.append("[(");
         b.append(this.toShortString());
-        for (TreeNode c: this.getChildren())
+        for (JavaTree c: this.getChildren())
             b.append(c.toStaticHashString());
         b.append(")]");
         return b.toString();

@@ -3,9 +3,9 @@ package fdse.zc.gumtree.java;
 import java.util.*;
 
 public class MultiMappingStore implements Iterable<Mapping> {
-    private Map<TreeNode, Set<TreeNode>> oldMap;
+    private Map<JavaTree, Set<JavaTree>> oldMap;
 
-    private Map<TreeNode, Set<TreeNode>> newMap;
+    private Map<JavaTree, Set<JavaTree>> newMap;
 
     public MultiMappingStore(Set<Mapping> mappingSet) {
         this();
@@ -21,60 +21,60 @@ public class MultiMappingStore implements Iterable<Mapping> {
 
     public Set<Mapping> getMappings() {
         Set<Mapping> mappingSet = new HashSet<>();
-        for (TreeNode oldNode : oldMap.keySet()) {
-            for (TreeNode newNode : oldMap.get(oldNode)) {
+        for (JavaTree oldNode : oldMap.keySet()) {
+            for (JavaTree newNode : oldMap.get(oldNode)) {
                 mappingSet.add(new Mapping(oldNode, newNode));
             }
         }
         return mappingSet;
     }
 
-    public void link(TreeNode oldNode, TreeNode newNode) {
+    public void link(JavaTree oldNode, JavaTree newNode) {
         if (!oldMap.containsKey(oldNode)){
-            oldMap.put(oldNode, new HashSet<TreeNode>());
+            oldMap.put(oldNode, new HashSet<JavaTree>());
         }
         oldMap.get(oldNode).add(newNode);
 
         if (!newMap.containsKey(newNode)){
-            newMap.put(newNode, new HashSet<TreeNode>());
+            newMap.put(newNode, new HashSet<JavaTree>());
         }
         newMap.get(newNode).add(oldNode);
     }
 
-    public void unlink(TreeNode oldNode, TreeNode newNode) {
+    public void unlink(JavaTree oldNode, JavaTree newNode) {
         oldMap.get(oldNode).remove(newNode);
         newMap.get(newNode).remove(oldNode);
     }
 
-    public Set<TreeNode> getNewNodeSet(TreeNode oldNode) {
+    public Set<JavaTree> getNewNodeSet(JavaTree oldNode) {
         return oldMap.get(oldNode);
     }
 
-    public Set<TreeNode> getOldMapKeySet() {
+    public Set<JavaTree> getOldMapKeySet() {
         return oldMap.keySet();
     }
 
-    public Set<TreeNode> getNewMapKeySet() {
+    public Set<JavaTree> getNewMapKeySet() {
         return newMap.keySet();
     }
 
-    public Set<TreeNode> getOldNodeSet(TreeNode newNode) {
+    public Set<JavaTree> getOldNodeSet(JavaTree newNode) {
         return newMap.get(newNode);
     }
 
-    public boolean hasSrc(TreeNode src) {
+    public boolean hasSrc(JavaTree src) {
         return oldMap.containsKey(src);
     }
 
-    public boolean hasDst(TreeNode dst) {
+    public boolean hasDst(JavaTree dst) {
         return newMap.containsKey(dst);
     }
 
-    public boolean has(TreeNode src, TreeNode dst) {
+    public boolean has(JavaTree src, JavaTree dst) {
         return oldMap.get(src).contains(dst);
     }
 
-    public boolean isMappingUnique(TreeNode oldNode) {
+    public boolean isMappingUnique(JavaTree oldNode) {
         return oldMap.get(oldNode).size() == 1 && newMap.get(oldMap.get(oldNode).iterator().next()).size() == 1;
     }
 

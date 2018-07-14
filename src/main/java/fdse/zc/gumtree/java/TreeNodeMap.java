@@ -4,9 +4,9 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class TreeNodeMap {
-    private TIntObjectMap<TreeNode> map;
+    private TIntObjectMap<JavaTree> map;
 
-    public TreeNodeMap(TreeNode treeNode) {
+    public TreeNodeMap(JavaTree treeNode) {
         this();
         putTreeNodes(treeNode);
     }
@@ -15,11 +15,11 @@ public class TreeNodeMap {
         map = new TIntObjectHashMap<>();
     }
 
-    public TreeNode getTreeNode(int id) {
+    public JavaTree getTreeNode(int id) {
         return map.get(id);
     }
 
-    public boolean contains(TreeNode treeNode) {
+    public boolean contains(JavaTree treeNode) {
         return contains(treeNode.getId());
     }
 
@@ -27,12 +27,12 @@ public class TreeNodeMap {
         return map.containsKey(id);
     }
 
-    public void putTreeNodes(TreeNode treeNode) {
-        for (TreeNode t: treeNode.getPreOrderTreeNodeList())
+    public void putTreeNodes(JavaTree treeNode) {
+        for (JavaTree t: treeNode.getPreOrderTreeNodeList())
             map.put(t.getId(), t);
     }
 
-    public void putTreeNode(TreeNode treeNode) {
+    public void putTreeNode(JavaTree treeNode) {
         map.put(treeNode.getId(), treeNode);
     }
 }

@@ -6,9 +6,13 @@ import java.util.Deque;
 
 public class JdtVisitor extends ASTVisitor {
 
-    protected TreeContext context = new TreeContext();
+    private TreeContext context = new TreeContext();
 
-    private Deque<TreeNode> treeDeque = new ArrayDeque<>();
+    private Deque<JavaTree> treeDeque = new ArrayDeque<>();
+
+    public JdtVisitor(CompilationUnit compilationUnit){
+
+    }
 
     public TreeContext getTreeContext() {
         return context;
@@ -25,11 +29,11 @@ public class JdtVisitor extends ASTVisitor {
     }
 
     protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
-        TreeNode t = context.createTreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+        JavaTree t = context.createTreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
         if (treeDeque.isEmpty())
             context.setRoot(t);
         else {
-            TreeNode parent = treeDeque.peek();
+            JavaTree parent = treeDeque.peek();
             t.setParentAndUpdateChildren(parent);
         }
         treeDeque.push(t);

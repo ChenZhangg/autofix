@@ -1,10 +1,10 @@
 package fdse.zc.gumtree.java;
 
 public class Insert extends Action{
-    private TreeNode node;
-    private TreeNode parent;
+    private JavaTree node;
+    private JavaTree parent;
     private int pos;
-    public Insert(TreeNode node, TreeNode parent, int pos){
+    public Insert(JavaTree node, JavaTree parent, int pos){
         this.node = node;
         this.parent = parent;
         this.pos = pos;

@@ -1,18 +1,18 @@
 package fdse.zc.gumtree.java;
 
 public class Mapping {
-    private TreeNode first;
-    private TreeNode second;
-    public Mapping(TreeNode first, TreeNode second){
+    private JavaTree first;
+    private JavaTree second;
+    public Mapping(JavaTree first, JavaTree second){
         this.first = first;
         this.second = second;
     }
 
-    public TreeNode getFirst() {
+    public JavaTree getFirst() {
         return first;
     }
 
-    public TreeNode getSecond() {
+    public JavaTree getSecond() {
         return second;
     }
 

@@ -5,26 +5,26 @@ import java.util.ArrayList;
 public abstract class Matcher {
     public static int MIN_HEIGHT = 1;
 
-    protected final TreeNode oldRoot;
-    protected final TreeNode newRoot;
+    protected final JavaTree oldRoot;
+    protected final JavaTree newRoot;
     protected final MappingStore mappingStore;
 
-    public Matcher(TreeNode oldRoot, TreeNode newRoot, MappingStore mappingStore) {
+    public Matcher(JavaTree oldRoot, JavaTree newRoot, MappingStore mappingStore) {
         this.oldRoot = oldRoot;
         this.newRoot = newRoot;
         this.mappingStore = mappingStore;
     }
 
-    protected void addMapping(TreeNode oldNode, TreeNode newNode) {
+    protected void addMapping(JavaTree oldNode, JavaTree newNode) {
         mappingStore.link(oldNode, newNode);
     }
 
-    protected void addMappingRecursively(TreeNode oldNode, TreeNode newNode) {
-        ArrayList<TreeNode> oldTreeNodeList = oldNode.getPreOrderTreeNodeList();
-        ArrayList<TreeNode> newTreeNodeList = newNode.getPreOrderTreeNodeList();
+    protected void addMappingRecursively(JavaTree oldNode, JavaTree newNode) {
+        ArrayList<JavaTree> oldTreeNodeList = oldNode.getPreOrderTreeNodeList();
+        ArrayList<JavaTree> newTreeNodeList = newNode.getPreOrderTreeNodeList();
         for (int i = 0; i < oldTreeNodeList.size(); i++) {
-            TreeNode currentOldTreeNode = oldTreeNodeList.get(i);
-            TreeNode currentNewTreeNode = newTreeNodeList.get(i);
+            JavaTree currentOldTreeNode = oldTreeNodeList.get(i);
+            JavaTree currentNewTreeNode = newTreeNodeList.get(i);
             addMapping(currentOldTreeNode, currentNewTreeNode);
         }
     }

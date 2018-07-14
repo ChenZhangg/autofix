@@ -6,47 +6,47 @@ public class HeightIndexedPriorityList {
     public static final int  MIN_HEIGHT = 1;
 
     private int maxHeight;
-    private ArrayList<TreeNode>[] array;
+    private ArrayList<JavaTree>[] array;
     private int currentIdx;
     @SuppressWarnings("unchecked")
-    public HeightIndexedPriorityList(TreeNode node) {
+    public HeightIndexedPriorityList(JavaTree node) {
         maxHeight = node.getHeight();
         int listSize = maxHeight - MIN_HEIGHT + 1;
-        array = (ArrayList<TreeNode>[])new ArrayList[listSize];
+        array = (ArrayList<JavaTree>[])new ArrayList[listSize];
         addTreeNode(node);
     }
 
     private int getArrayIndex(int height){ return maxHeight - height; }
 
-    private void addTreeNode(TreeNode node) {
+    private void addTreeNode(JavaTree node) {
         if(node.getHeight() >= MIN_HEIGHT){
             int arrayIndex = getArrayIndex(node.getHeight());
-            if(array[arrayIndex] == null) array[arrayIndex] = new  ArrayList<TreeNode>();
+            if(array[arrayIndex] == null) array[arrayIndex] = new  ArrayList<JavaTree>();
             array[arrayIndex].add(node);
         }
     }
 
-    public ArrayList<TreeNode> open(){
-        ArrayList<TreeNode> list = pop();
+    public ArrayList<JavaTree> open(){
+        ArrayList<JavaTree> list = pop();
         if(list == null)
             return null;
-        for(TreeNode node : list){
+        for(JavaTree node : list){
             open(node);
         }
         updateHeight();
         return list;
     }
 
-    public void open(TreeNode node) {
-        for (TreeNode childNode : node.getChildren())
+    public void open(JavaTree node) {
+        for (JavaTree childNode : node.getChildren())
             addTreeNode(childNode);
     }
 
-    public ArrayList<TreeNode> pop(){
+    public ArrayList<JavaTree> pop(){
         if(currentIdx == -1) {
             return null;
         }else{
-            ArrayList<TreeNode> list = array[currentIdx];
+            ArrayList<JavaTree> list = array[currentIdx];
             array[currentIdx] = null;
             return list;
         }
