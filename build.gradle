@@ -42,6 +42,6 @@ repositories {
 }
 
 task execute(type: JavaExec) {
-  main = 'fdse.zc.Diff'
+  main = 'fdse.zc.gumtree.java.ChangeJava'
   classpath = sourceSets.main.runtimeClasspath
 }
