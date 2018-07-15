@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fdse.zc.gumtree.java.JavaTree;
+
 public class ActionGenerator {
     private ITree oldRoot;
     private ITree newRoot;
@@ -43,8 +45,8 @@ public class ActionGenerator {
     }
 
     public List<Action> generate(){
-        ITree oldFakeRoot = ITree.fakeParentTreeNode(oldRootClone);
-        ITree newFakeRoot = ITree.fakeParentTreeNode(newRoot);
+        ITree oldFakeRoot = JavaTree.fakeParentTreeNode(oldRootClone);
+        ITree newFakeRoot = JavaTree.fakeParentTreeNode(newRoot);
 
         oldInOrder = new HashSet<>();
         newInOrder = new HashSet<>();
@@ -56,7 +58,7 @@ public class ActionGenerator {
             ITree z = mappingStoreClone.getOldTreeNode(y);
             if(!mappingStoreClone.hasNewTreeNode(x)){
                 int k = findPos(x);
-                w = ITree.fakeParentTreeNode(null);
+                w = JavaTree.fakeParentTreeNode(null);
                 w.setId(newId());
 
                 Action ins = new Insert(x, oldRootMap.get(z.getId()), k);

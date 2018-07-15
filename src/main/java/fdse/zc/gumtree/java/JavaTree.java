@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import fdse.zc.gumtree.HashGenerator;
 import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.TreeUtils;
 
 public class JavaTree implements ITree {
     public static final String NO_LABEL = "";
@@ -54,8 +56,8 @@ public class JavaTree implements ITree {
 
     }
 
-    public static JavaTree fakeParentTreeNode(JavaTree child){
-        JavaTree parent = new JavaTree();
+    public static ITree fakeParentTreeNode(ITree child){
+        ITree parent = new JavaTree();
         if(child != null){
             parent.addChild(child);
             child.setParent(parent);

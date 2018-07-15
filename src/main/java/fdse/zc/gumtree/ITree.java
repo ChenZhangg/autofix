@@ -14,6 +14,9 @@ public interface ITree {
     int NO_ID = Integer.MIN_VALUE;
     String NO_LABEL = "";
     int NO_VALUE = -1;
+
+
+  
     public ArrayList<ITree> getPreOrderTreeNodeList();
     public ArrayList<ITree> getPostOrderTreeNodeList();
     public ArrayList<ITree> getBreadthFirstTreeNodeList();
@@ -75,7 +78,7 @@ public interface ITree {
 
     public int getHeight();
 
-    public void setSize;
+    public void setSize(int size);
 
     public int getSize();
 
@@ -91,6 +94,7 @@ public interface ITree {
 
     public int getHash();
 
+    public int getPositionInParent();
     /**
      * @return a boolean indicating if the tree has at least one child or not
      */
