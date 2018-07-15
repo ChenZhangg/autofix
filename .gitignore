@@ -50,7 +50,7 @@ gradle/wrapper
 
 # macOS
 # ----
-.DS_Store
+*.DS_Store
 
 # HPROF
 # -----
