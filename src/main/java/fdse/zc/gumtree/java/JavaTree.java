@@ -299,6 +299,6 @@ public class JavaTree implements ITree {
         b.append("  hash:" + hash);
         return b.toString();
         */
-        return "-->" + astNode.toString() + "<--";
+        return "-->" + astNode.toString() + "<--start" + startLineNumber + " end " + endLineNumber;
     }
 }
