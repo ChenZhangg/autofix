@@ -30,11 +30,11 @@ public class JdtVisitor extends ASTVisitor {
         int length = node.getLength();
         int startLineNumber = compilationUnit.getLineNumber(startPosition);
         int endLineNumber = compilationUnit.getLineNumber(startPosition + length - 1);
-        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber);
+        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, node);
     }
 
-    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber) {
-        ITree t = context.createTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber);
+    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
+        ITree t = context.createTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, astNode);
         if (treeDeque.isEmpty())
             context.setRoot(t);
         else {

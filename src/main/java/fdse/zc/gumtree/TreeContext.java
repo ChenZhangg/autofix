@@ -3,6 +3,8 @@ package fdse.zc.gumtree;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import fdse.zc.gumtree.java.JavaTree;
 
 public class TreeContext {
@@ -16,9 +18,9 @@ public class TreeContext {
     }
 
     public ITree getRoot() {return root;}
-    public ITree createTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber) {
+    public ITree createTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
         registerTypeName(nodeTypeNumber, nodeTypeName);
-        return new JavaTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber);
+        return new JavaTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, astNode);
     }
 
     protected void registerTypeName(int nodeTypeNumber, String nodeTypeName) {

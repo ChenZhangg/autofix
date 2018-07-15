@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import fdse.zc.gumtree.HashGenerator;
 import fdse.zc.gumtree.ITree;
 import fdse.zc.gumtree.TreeUtils;
@@ -11,6 +13,7 @@ import fdse.zc.gumtree.TreeUtils;
 public class JavaTree implements ITree {
     public static final String NO_LABEL = "";
 
+    private ASTNode astNode;
     private int nodeTypeNumber;
     private String nodeTypeName;
     private String nodeLabel;
@@ -27,7 +30,7 @@ public class JavaTree implements ITree {
     private ITree parent;
     private List<ITree> children = new ArrayList<>();;
 
-    public JavaTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber) {
+    public JavaTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
         this.nodeTypeNumber = nodeTypeNumber;
         this.nodeTypeName = nodeTypeName;
         this.nodeLabel = (nodeLabel == null) ? NO_LABEL : nodeLabel;
@@ -35,6 +38,7 @@ public class JavaTree implements ITree {
         this.length = length;
         this.startLineNumber = startLineNumber;
         this.endLineNumber = endLineNumber;
+        this.astNode = astNode;
     }
 
     private JavaTree(JavaTree other) {
@@ -281,6 +285,7 @@ public class JavaTree implements ITree {
     }
 
     public String toString(){
+        /*
         StringBuilder b = new StringBuilder();
         b.append("nodeTypeNumber:" + nodeTypeNumber);
         b.append("  nodeTypeName:" + nodeTypeName);
@@ -293,5 +298,7 @@ public class JavaTree implements ITree {
         b.append("  depth:" + depth);
         b.append("  hash:" + hash);
         return b.toString();
+        */
+        return "-->" + astNode.toString() + "<--";
     }
 }

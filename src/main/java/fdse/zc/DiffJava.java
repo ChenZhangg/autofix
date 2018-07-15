@@ -1,30 +1,18 @@
 package fdse.zc;
 
 import java.util.List;
-import java.util.Map;
-
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 
 import fdse.zc.gumtree.Action;
 import fdse.zc.gumtree.ActionGenerator;
 import fdse.zc.gumtree.GreedyBottomUpMatcher;
 import fdse.zc.gumtree.GreedySubtreeMatcher;
-import fdse.zc.gumtree.HashGenerator;
 import fdse.zc.gumtree.ITree;
-import fdse.zc.gumtree.java.JdtVisitor;
 import fdse.zc.gumtree.Mapping;
 import fdse.zc.gumtree.MappingStore;
 import fdse.zc.gumtree.TreeContext;
-import fdse.zc.gumtree.java.JavaTree;
 import fdse.zc.gumtree.java.JdtTreeGenerator;
-import fdse.zc.gumtree.TreeUtils;
-
-
 
 public class DiffJava{
-  private ASTParser parser = null;
   public static void main(String[] args) throws Exception {
     DiffJava diff = new DiffJava();
     String repoPath = "/Users/zhangchen/projects/projectanalysis/dynjs/.git";
