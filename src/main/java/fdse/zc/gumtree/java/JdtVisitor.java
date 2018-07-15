@@ -5,13 +5,13 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class JdtVisitor extends ASTVisitor {
-
+    private CompilationUnit compilationUnit = null;
     private TreeContext context = new TreeContext();
-
     private Deque<JavaTree> treeDeque = new ArrayDeque<>();
 
     public JdtVisitor(CompilationUnit compilationUnit){
-
+      super();
+      this.compilationUnit = compilationUnit;
     }
 
     public TreeContext getTreeContext() {
@@ -25,6 +25,8 @@ public class JdtVisitor extends ASTVisitor {
         String nodeLabel = getLabel(node);
         int startPosition = node.getStartPosition();
         int length = node.getLength();
+        int startLineNumber = compilationUnit.getLineNumber(startPosition);
+        int endLineNumber = compilationUnit.getLineNumber(startPosition + length - 1);
         pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
     }
 
