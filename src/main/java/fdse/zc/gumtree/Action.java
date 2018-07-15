@@ -1,4 +1,4 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 public abstract class Action {
 }

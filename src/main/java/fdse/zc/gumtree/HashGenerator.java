@@ -1,30 +1,30 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import java.security.MessageDigest;
 
 public class HashGenerator {
     public static final int BASE = 33;
 
-    public void hash(JavaTree node) {
+    public void hash(ITree node) {
         if(node.isLeaf()){
             node.setHash(leafHash(node));
             return;
         }
-        for(JavaTree c : node.getChildren()){
+        for(ITree c : node.getChildren()){
             hash(c);
         }
         node.setHash(innerNodeHash(node));
     }
 
-    public int leafHash(JavaTree node) {
+    public int leafHash(ITree node) {
         return BASE * hashFunction(inSeed(node)) + hashFunction(outSeed(node));
     }
 
-    public int innerNodeHash(JavaTree node) {
+    public int innerNodeHash(ITree node) {
         int size = node.getSize() * 2 - 1;
         int hash = hashFunction(inSeed(node)) * fpow(BASE, size);
 
-        for (JavaTree c: node.getChildren()) {
+        for (ITree c: node.getChildren()) {
             size = size - c.getSize() * 2;
             hash += c.getHash() * fpow(BASE, size);
         }
@@ -33,11 +33,11 @@ public class HashGenerator {
         return hash;
     }
 
-    public static String inSeed(JavaTree node) {
+    public static String inSeed(ITree node) {
         return "[(" + node.getNodeLabel() + "@@" + node.getNodeTypeName();
     }
 
-    public static String outSeed(JavaTree node) {
+    public static String outSeed(ITree node) {
         return  node.getNodeTypeName() + "@@" + node.getNodeLabel() + ")]";
     }
 

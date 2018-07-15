@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import fdse.zc.gumtree.java.TreeContext;
-
 public abstract class TreeGenerator {
   public TreeContext getTreeContextFromFile(String path) throws IOException {
     List<String> lines = Files.readAllLines(Paths.get(path));

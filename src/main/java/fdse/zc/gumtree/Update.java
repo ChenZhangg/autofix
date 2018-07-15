@@ -1,9 +1,9 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 public class Update extends Action{
-    private JavaTree node;
+    private ITree node;
     private String label;
-    public Update(JavaTree node, String label){
+    public Update(ITree node, String label){
         this.node = node;
         this.label = label;
     }

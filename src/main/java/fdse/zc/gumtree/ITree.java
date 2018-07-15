@@ -51,10 +51,46 @@ public interface ITree {
      * children list, at the last position
      */
     void setParentAndUpdateChildren(ITree parent);
-    public void setHash(int hash);
-    public int getHash();
-    public void setNodeTypeNumber(int nodeTypeName);
+    public void setNodeTypeNumber(int nodeTypeNumber);
+
     public int getNodeTypeNumber();
+
+    public void setNodeTypeName(String nodeTypeName);
+
+    public String getNodeTypeName();
+
+    public void setNodeLabel(String nodeLabel);
+
+    public String getNodeLabel();
+
+    public void setStartPosition(int startPosition);
+
+    public int getStartPosition();
+
+    public void setLength(int length);
+
+    public int getLength();
+
+    public void setHeight(int height);
+
+    public int getHeight();
+
+    public void setSize;
+
+    public int getSize();
+
+    public void setDepth(int depth);
+
+    public int getDepth();
+
+    public void setId(int id);
+
+    public int getId();
+
+    public void setHash(int hash);
+
+    public int getHash();
+
     /**
      * @return a boolean indicating if the tree has at least one child or not
      */
