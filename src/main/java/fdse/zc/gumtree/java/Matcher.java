@@ -20,8 +20,8 @@ public abstract class Matcher {
     }
 
     protected void addMappingRecursively(JavaTree oldNode, JavaTree newNode) {
-        ArrayList<JavaTree> oldTreeNodeList = oldNode.getPreOrderTreeNodeList();
-        ArrayList<JavaTree> newTreeNodeList = newNode.getPreOrderTreeNodeList();
+        ArrayList<ITree> oldTreeNodeList = oldNode.getPreOrderTreeNodeList();
+        ArrayList<ITree> newTreeNodeList = newNode.getPreOrderTreeNodeList();
         for (int i = 0; i < oldTreeNodeList.size(); i++) {
             JavaTree currentOldTreeNode = oldTreeNodeList.get(i);
             JavaTree currentNewTreeNode = newTreeNodeList.get(i);

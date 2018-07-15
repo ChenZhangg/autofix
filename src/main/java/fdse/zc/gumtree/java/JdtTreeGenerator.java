@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import fdse.zc.gumtree.TreeContext;
 import fdse.zc.gumtree.TreeGenerator;
 
 public class JdtTreeGenerator extends TreeGenerator {
@@ -23,7 +24,7 @@ public class JdtTreeGenerator extends TreeGenerator {
     parser.setCompilerOptions(options);
     parser.setSource(charArray);
     CompilationUnit astRoot = (CompilationUnit)parser.createAST(null);
-    JdtVisitor visitor = new JdtVisitor();
+    JdtVisitor visitor = new JdtVisitor(astRoot);
     astRoot.accept(visitor);
     TreeContext treeContext = visitor.getTreeContext();
 		return treeContext;

@@ -1,13 +1,16 @@
 package fdse.zc.gumtree.java;
 import org.eclipse.jdt.core.dom.*;
 
+import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.TreeContext;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class JdtVisitor extends ASTVisitor {
     private CompilationUnit compilationUnit = null;
     private TreeContext context = new TreeContext();
-    private Deque<JavaTree> treeDeque = new ArrayDeque<>();
+    private Deque<ITree> treeDeque = new ArrayDeque<>();
 
     public JdtVisitor(CompilationUnit compilationUnit){
       super();
@@ -27,15 +30,15 @@ public class JdtVisitor extends ASTVisitor {
         int length = node.getLength();
         int startLineNumber = compilationUnit.getLineNumber(startPosition);
         int endLineNumber = compilationUnit.getLineNumber(startPosition + length - 1);
-        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber);
     }
 
-    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
-        JavaTree t = context.createTreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber) {
+        ITree t = context.createTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber);
         if (treeDeque.isEmpty())
             context.setRoot(t);
         else {
-            JavaTree parent = treeDeque.peek();
+            ITree parent = treeDeque.peek();
             t.setParentAndUpdateChildren(parent);
         }
         treeDeque.push(t);
