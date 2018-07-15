@@ -1,12 +1,12 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class TreeNodeMap {
-    private TIntObjectMap<TreeNode> map;
+    private TIntObjectMap<ITree> map;
 
-    public TreeNodeMap(TreeNode treeNode) {
+    public TreeNodeMap(ITree treeNode) {
         this();
         putTreeNodes(treeNode);
     }
@@ -15,11 +15,11 @@ public class TreeNodeMap {
         map = new TIntObjectHashMap<>();
     }
 
-    public TreeNode getTreeNode(int id) {
+    public ITree getTreeNode(int id) {
         return map.get(id);
     }
 
-    public boolean contains(TreeNode treeNode) {
+    public boolean contains(ITree treeNode) {
         return contains(treeNode.getId());
     }
 
@@ -27,12 +27,12 @@ public class TreeNodeMap {
         return map.containsKey(id);
     }
 
-    public void putTreeNodes(TreeNode treeNode) {
-        for (TreeNode t: treeNode.getPreOrderTreeNodeList())
+    public void putTreeNodes(ITree treeNode) {
+        for (ITree t: treeNode.getPreOrderTreeNodeList())
             map.put(t.getId(), t);
     }
 
-    public void putTreeNode(TreeNode treeNode) {
+    public void putTreeNode(ITree treeNode) {
         map.put(treeNode.getId(), treeNode);
     }
 }

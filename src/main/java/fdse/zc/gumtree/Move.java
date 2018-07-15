@@ -1,10 +1,10 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 public class Move extends Action {
-    private TreeNode node;
-    private TreeNode parent;
+    private ITree node;
+    private ITree parent;
     private int pos;
-    public Move(TreeNode node, TreeNode parent, int pos){
+    public Move(ITree node, ITree parent, int pos){
         this.node = node;
         this.parent = parent;
         this.pos = pos;

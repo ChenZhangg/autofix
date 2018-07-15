@@ -5,8 +5,13 @@ import java.util.Map;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import fdse.zc.gumtree.HashGenerator;
+import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.TreeContext;
 import fdse.zc.gumtree.TreeGenerator;
+import fdse.zc.gumtree.TreeUtils;
 
 public class JdtTreeGenerator extends TreeGenerator {
 
@@ -20,11 +25,18 @@ public class JdtTreeGenerator extends TreeGenerator {
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
-    JdtVisitor visitor = new JdtVisitor();
-
     parser.setSource(charArray);
-    parser.createAST(null).accept(visitor);
+    CompilationUnit astRoot = (CompilationUnit)parser.createAST(null);
+    JdtVisitor visitor = new JdtVisitor(astRoot);
+    astRoot.accept(visitor);
     TreeContext treeContext = visitor.getTreeContext();
+    TreeUtils treeUtils = new TreeUtils();
+    ITree root = treeContext.getRoot();
+    treeUtils.computeHeight(root);
+    treeUtils.computeSize(root);
+    treeUtils.computeDepth(root, -1);
+    treeUtils.computeId(root);
+    new HashGenerator().hash(root);
 		return treeContext;
 	}
 

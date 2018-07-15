@@ -1,22 +1,26 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import fdse.zc.gumtree.java.JavaTree;
 
 public class TreeContext {
 
     private Map<Integer, String> typeNameMap = new HashMap<>();
 
-    private TreeNode root;
+    private ITree root;
 
-    public void setRoot(TreeNode root) {
+    public void setRoot(ITree root) {
         this.root = root;
     }
 
-    public TreeNode getRoot() {return root;}
-    public TreeNode createTreeNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
+    public ITree getRoot() {return root;}
+    public ITree createTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
         registerTypeName(nodeTypeNumber, nodeTypeName);
-        return new TreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+        return new JavaTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, astNode);
     }
 
     protected void registerTypeName(int nodeTypeNumber, String nodeTypeName) {

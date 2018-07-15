@@ -1,28 +1,18 @@
 package fdse.zc;
 
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-
-import fdse.zc.gumtree.java.Action;
-import fdse.zc.gumtree.java.ActionGenerator;
-import fdse.zc.gumtree.java.GreedyBottomUpMatcher;
-import fdse.zc.gumtree.java.GreedySubtreeMatcher;
-import fdse.zc.gumtree.java.HashGenerator;
-import fdse.zc.gumtree.java.JdtVisitor;
-import fdse.zc.gumtree.java.Mapping;
-import fdse.zc.gumtree.java.MappingStore;
-import fdse.zc.gumtree.java.TreeContext;
-import fdse.zc.gumtree.java.TreeNode;
-import fdse.zc.gumtree.java.TreeUtils;
-
-
+import fdse.zc.gumtree.Action;
+import fdse.zc.gumtree.ActionGenerator;
+import fdse.zc.gumtree.GreedyBottomUpMatcher;
+import fdse.zc.gumtree.GreedySubtreeMatcher;
+import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.Mapping;
+import fdse.zc.gumtree.MappingStore;
+import fdse.zc.gumtree.TreeContext;
+import fdse.zc.gumtree.java.JdtTreeGenerator;
 
 public class DiffJava{
-  private ASTParser parser = null;
   public static void main(String[] args) throws Exception {
     DiffJava diff = new DiffJava();
     String repoPath = "/Users/zhangchen/projects/projectanalysis/dynjs/.git";
@@ -32,24 +22,12 @@ public class DiffJava{
     diff.diffFile(repoPath, filePath, preCommit, nextCommit);
   }
 
-  public void initParser(){
-    parser = ASTParser.newParser(AST.JLS10);
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-    Map<String, String> options = JavaCore.getOptions();
-    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_10);
-    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_10);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-    options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-    parser.setCompilerOptions(options);
-  }
-
   public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
-    initParser();
     GitRepo repo = new GitRepo(repoPath);
     char[] oldCharArray = repo.getChars(oldCommit, filePath);
     char[] newCharArray = repo.getChars(newCommit, filePath);
-    TreeNode oldRoot = getRoot(oldCharArray);
-    TreeNode newRoot = getRoot(newCharArray);
+    ITree oldRoot = getRoot(oldCharArray);
+    ITree newRoot = getRoot(newCharArray);
     MappingStore mappingStore = new MappingStore();
     new GreedySubtreeMatcher(oldRoot, newRoot, mappingStore).match();
     new GreedyBottomUpMatcher(oldRoot, newRoot, mappingStore).match();
@@ -64,24 +42,16 @@ public class DiffJava{
     }
   }
 
-  public TreeNode getRoot(char[] charArray){
-    JdtVisitor visitor = new JdtVisitor();
-    parser.setSource(charArray);
-    parser.createAST(null).accept(visitor);
-    TreeContext treeContext = visitor.getTreeContext();
-    TreeNode root = treeContext.getRoot();
-    TreeUtils treeUtils = new TreeUtils();
-    treeUtils.computeHeight(root);
-    treeUtils.computeSize(root);
-    treeUtils.computeDepth(root, -1);
-    treeUtils.computeId(root);
-    new HashGenerator().hash(root);
+  public ITree getRoot(char[] charArray){
+    JdtTreeGenerator generator = new JdtTreeGenerator();
+    TreeContext treeContext = generator.getTreeContext(charArray);
+    ITree root = treeContext.getRoot();
     return root;
   }
-  public static void postOrder(TreeNode root){
-    for(TreeNode node:root.getPreOrderTreeNodeList()){
+  public static void postOrder(ITree root){
+    for(ITree node:root.getPreOrderTreeNodeList()){
         System.out.println(node);
-        TreeNode parent = node.getParent();
+        ITree parent = node.getParent();
         if(parent == null)
             System.out.println("parent: null");
         else

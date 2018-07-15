@@ -4,31 +4,44 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TreeNode {
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import fdse.zc.gumtree.HashGenerator;
+import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.TreeUtils;
+
+public class JavaTree implements ITree {
     public static final String NO_LABEL = "";
 
+    private ASTNode astNode;
     private int nodeTypeNumber;
     private String nodeTypeName;
     private String nodeLabel;
     private int startPosition;
     private int length;
+    private int startLineNumber;
+    private int endLineNumber;
+
     private int height;
     private int size;
     private int depth;
     private int id;
     private int hash;
-    private TreeNode parent;
-    private List<TreeNode> children = new ArrayList<>();;
+    private ITree parent;
+    private List<ITree> children = new ArrayList<>();;
 
-    public TreeNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
+    public JavaTree(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
         this.nodeTypeNumber = nodeTypeNumber;
         this.nodeTypeName = nodeTypeName;
         this.nodeLabel = (nodeLabel == null) ? NO_LABEL : nodeLabel;
         this.startPosition = startPosition;
         this.length = length;
+        this.startLineNumber = startLineNumber;
+        this.endLineNumber = endLineNumber;
+        this.astNode = astNode;
     }
 
-    private TreeNode(TreeNode other) {
+    private JavaTree(JavaTree other) {
         this.nodeTypeNumber = other.getNodeTypeNumber();
         this.nodeTypeName = other.getNodeTypeName();
         this.nodeLabel = other.getNodeLabel();
@@ -40,15 +53,15 @@ public class TreeNode {
         this.hash = other.getHash();
         this.depth = other.getDepth();
         this.id = other.getId();
-        this.children = new ArrayList<TreeNode>();
+        this.children = new ArrayList<ITree>();
     }
 
-    private TreeNode(){
+    private JavaTree(){
 
     }
 
-    public static TreeNode fakeParentTreeNode(TreeNode child){
-        TreeNode parent = new TreeNode();
+    public static ITree fakeParentTreeNode(ITree child){
+        ITree parent = new JavaTree();
         if(child != null){
             parent.addChild(child);
             child.setParent(parent);
@@ -56,65 +69,65 @@ public class TreeNode {
         return parent;
     }
 
-    public TreeNode deepCopy() {
-        TreeNode copy = new TreeNode(this);
-        for (TreeNode child : getChildren())
+    public ITree deepCopy() {
+        ITree copy = new JavaTree(this);
+        for (ITree child : getChildren())
             copy.addChild(child.deepCopy());
         return copy;
     }
 
-    public void addChild(TreeNode child) {
+    public void addChild(ITree child) {
         children.add(child);
         child.setParent(this);
     }
 
-    public void setParentAndUpdateChildren(TreeNode parent) {
+    public void setParentAndUpdateChildren(ITree parent) {
         this.parent = parent;
         if (this.parent != null)
             parent.getChildren().add(this);
     }
 
-    public ArrayList<TreeNode> getPreOrderTreeNodeList() {
-        ArrayList<TreeNode> list = new ArrayList<>();
+    public ArrayList<ITree> getPreOrderTreeNodeList() {
+        ArrayList<ITree> list = new ArrayList<>();
         getPreOrderTreeNodeList(this, list);
         return list;
     }
 
-    public void getPreOrderTreeNodeList(TreeNode node, ArrayList<TreeNode> list) {
+    public void getPreOrderTreeNodeList(ITree node, ArrayList<ITree> list) {
         list.add(node);
         if(node.isLeaf()) {
             return;
         }
-        for(TreeNode child : node.getChildren()){
+        for(ITree child : node.getChildren()){
             getPreOrderTreeNodeList(child, list);
         }
     }
 
-    public ArrayList<TreeNode> getPostOrderTreeNodeList() {
-        ArrayList<TreeNode> list = new ArrayList<>();
+    public ArrayList<ITree> getPostOrderTreeNodeList() {
+        ArrayList<ITree> list = new ArrayList<>();
         getPostOrderTreeNodeList(this, list);
         return list;
     }
 
-    public void getPostOrderTreeNodeList(TreeNode node, ArrayList<TreeNode> list) {
-        for(TreeNode child : node.getChildren()){
+    public void getPostOrderTreeNodeList(ITree node, ArrayList<ITree> list) {
+        for(ITree child : node.getChildren()){
             getPostOrderTreeNodeList(child, list);
         }
         list.add(node);
     }
 
-    public ArrayList<TreeNode> getDescendants() {
-        ArrayList<TreeNode> list = getPreOrderTreeNodeList();
+    public ArrayList<ITree> getDescendants() {
+        ArrayList<ITree> list = getPreOrderTreeNodeList();
         list.remove(0);
         return list;
     }
 
-    public ArrayList<TreeNode> getBreadthFirstTreeNodeList(){
-        ArrayList<TreeNode> list = new ArrayList<>();
-        ArrayList<TreeNode> temp = new ArrayList<>();
+    public ArrayList<ITree> getBreadthFirstTreeNodeList(){
+        ArrayList<ITree> list = new ArrayList<>();
+        ArrayList<ITree> temp = new ArrayList<>();
         temp.add(this);
         while (temp.size() > 0){
-            TreeNode node = temp.remove(0);
+            ITree node = temp.remove(0);
             list.add(node);
             temp.addAll(node.getChildren());
         }
@@ -201,31 +214,31 @@ public class TreeNode {
         return hash;
     }
 
-    public void setParent(TreeNode parent) {
+    public void setParent(ITree parent) {
         this.parent = parent;
     }
 
-    public TreeNode getParent() {
+    public ITree getParent() {
         return parent;
     }
 
-    public TreeNode getChild(int position) {
+    public ITree getChild(int position) {
         return getChildren().get(position);
     }
 
-    public int getChildPosition(TreeNode child) {
+    public int getChildPosition(ITree child) {
         return getChildren().indexOf(child);
     }
 
     public int getPositionInParent(){
-        TreeNode parent = getParent();
+        ITree parent = getParent();
         if(parent == null)
             return -1;
         else
             return parent.getChildPosition(this);
     }
 
-    public List<TreeNode> getChildren() {
+    public List<ITree> getChildren() {
         return children;
     }
 
@@ -237,11 +250,11 @@ public class TreeNode {
         return parent == null;
     }
 
-    public boolean isSameType(TreeNode node) {
+    public boolean isSameType(ITree node) {
         return getNodeTypeNumber() == node.getNodeTypeNumber();
     }
 
-    public boolean isIsomorphicTo(TreeNode node) {
+    public boolean isIsomorphicTo(ITree node) {
         if (this.getHash() != node.getHash()) {
             return false;
         } else {
@@ -261,7 +274,7 @@ public class TreeNode {
         StringBuilder b = new StringBuilder();
         b.append("[(");
         b.append(this.toShortString());
-        for (TreeNode c: this.getChildren())
+        for (ITree c: this.getChildren())
             b.append(c.toStaticHashString());
         b.append(")]");
         return b.toString();
@@ -272,6 +285,7 @@ public class TreeNode {
     }
 
     public String toString(){
+        /*
         StringBuilder b = new StringBuilder();
         b.append("nodeTypeNumber:" + nodeTypeNumber);
         b.append("  nodeTypeName:" + nodeTypeName);
@@ -284,5 +298,7 @@ public class TreeNode {
         b.append("  depth:" + depth);
         b.append("  hash:" + hash);
         return b.toString();
+        */
+        return "-->" + astNode.toString() + "<--";
     }
 }

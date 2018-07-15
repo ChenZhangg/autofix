@@ -1,14 +1,21 @@
 package fdse.zc.gumtree.java;
 import org.eclipse.jdt.core.dom.*;
 
+import fdse.zc.gumtree.ITree;
+import fdse.zc.gumtree.TreeContext;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class JdtVisitor extends ASTVisitor {
+    private CompilationUnit compilationUnit = null;
+    private TreeContext context = new TreeContext();
+    private Deque<ITree> treeDeque = new ArrayDeque<>();
 
-    protected TreeContext context = new TreeContext();
-
-    private Deque<TreeNode> treeDeque = new ArrayDeque<>();
+    public JdtVisitor(CompilationUnit compilationUnit){
+      super();
+      this.compilationUnit = compilationUnit;
+    }
 
     public TreeContext getTreeContext() {
         return context;
@@ -21,15 +28,17 @@ public class JdtVisitor extends ASTVisitor {
         String nodeLabel = getLabel(node);
         int startPosition = node.getStartPosition();
         int length = node.getLength();
-        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+        int startLineNumber = compilationUnit.getLineNumber(startPosition);
+        int endLineNumber = compilationUnit.getLineNumber(startPosition + length - 1);
+        pushNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, node);
     }
 
-    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length) {
-        TreeNode t = context.createTreeNode(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length);
+    protected void pushNode(int nodeTypeNumber, String nodeTypeName, String nodeLabel, int startPosition, int length, int startLineNumber, int endLineNumber, ASTNode astNode) {
+        ITree t = context.createTree(nodeTypeNumber, nodeTypeName, nodeLabel, startPosition, length, startLineNumber, endLineNumber, astNode);
         if (treeDeque.isEmpty())
             context.setRoot(t);
         else {
-            TreeNode parent = treeDeque.peek();
+            ITree parent = treeDeque.peek();
             t.setParentAndUpdateChildren(parent);
         }
         treeDeque.push(t);

@@ -1,10 +1,10 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import java.util.*;
 
 public class MappingStore {
-    private Map<TreeNode, TreeNode> oldMap;
-    private Map<TreeNode, TreeNode> newMap;
+    private Map<ITree, ITree> oldMap;
+    private Map<ITree, ITree> newMap;
 
     public MappingStore() {
         oldMap = new HashMap<>();
@@ -16,27 +16,27 @@ public class MappingStore {
         for (Mapping m: mappings) link(m.getFirst(), m.getSecond());
     }
 
-    public void link(TreeNode oldNode, TreeNode newNode) {
+    public void link(ITree oldNode, ITree newNode) {
         oldMap.put(oldNode, newNode);
         newMap.put(newNode, oldNode);
     }
 
-    public TreeNode getNewTreeNode(TreeNode oldNode){
+    public ITree getNewTreeNode(ITree oldNode){
         return oldMap.get(oldNode);
     }
-    public TreeNode getOldTreeNode(TreeNode newNode){
+    public ITree getOldTreeNode(ITree newNode){
         return newMap.get(newNode);
     }
 
-    public boolean has(TreeNode oldNode, TreeNode newNode){
+    public boolean has(ITree oldNode, ITree newNode){
         return oldMap.get(oldNode) == newNode;
     }
 
-    public boolean hasNewTreeNode(TreeNode node){
+    public boolean hasNewTreeNode(ITree node){
         return newMap.containsKey(node);
     }
 
-    public boolean hasOldTreeNode(TreeNode node){
+    public boolean hasOldTreeNode(ITree node){
         return oldMap.containsKey(node);
     }
 
@@ -49,7 +49,7 @@ public class MappingStore {
 
             @Override
             public Iterator<Mapping> iterator() {
-                Iterator<TreeNode> it = oldMap.keySet().iterator();
+                Iterator<ITree> it = oldMap.keySet().iterator();
                 return new Iterator<Mapping>() {
                     @Override
                     public boolean hasNext() {
@@ -58,7 +58,7 @@ public class MappingStore {
 
                     @Override
                     public Mapping next() {
-                        TreeNode old = it.next();
+                        ITree old = it.next();
                         if (old == null) return null;
                         return new Mapping(old, oldMap.get(old));
                     }

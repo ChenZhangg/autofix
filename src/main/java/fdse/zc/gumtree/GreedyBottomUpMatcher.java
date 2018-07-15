@@ -1,4 +1,4 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ public class GreedyBottomUpMatcher extends Matcher{
     protected TreeNodeMap mappedOld;
     protected TreeNodeMap mappedNew;
 
-    public GreedyBottomUpMatcher(TreeNode oldRoot, TreeNode newRoot, MappingStore mappingStore) {
+    public GreedyBottomUpMatcher(ITree oldRoot, ITree newRoot, MappingStore mappingStore) {
         super(oldRoot, newRoot, mappingStore);
         srcIds = new TreeNodeMap(oldRoot);
         dstIds = new TreeNodeMap(newRoot);
@@ -26,18 +26,18 @@ public class GreedyBottomUpMatcher extends Matcher{
     }
 
     public void match() {
-        for (TreeNode t: oldRoot.getPostOrderTreeNodeList())  {
+        for (ITree t: oldRoot.getPostOrderTreeNodeList())  {
             if (t.isRoot()) {
                 addMapping(t, newRoot);
                 lastChanceMatch(t, newRoot);
                 break;
             } else if (!(isOldMatched(t) || t.isLeaf())) {
 
-                List<TreeNode> candidates = getNewCandidates(t);
-                TreeNode best = null;
+                List<ITree> candidates = getNewCandidates(t);
+                ITree best = null;
                 double max = -1D;
 
-                for (TreeNode cand: candidates) {
+                for (ITree cand: candidates) {
                     double sim = jaccardSimilarity(t, cand);
                     if (sim > max && sim >= 0.5) {
                         max = sim;
@@ -51,17 +51,17 @@ public class GreedyBottomUpMatcher extends Matcher{
             }
         }
     }
-    protected List<TreeNode> getNewCandidates(TreeNode old) {
-        List<TreeNode> seeds = new ArrayList<>();
-        for (TreeNode c: old.getDescendants()) {
-            TreeNode m = mappingStore.getNewTreeNode(c);
+    protected List<ITree> getNewCandidates(ITree old) {
+        List<ITree> seeds = new ArrayList<>();
+        for (ITree c: old.getDescendants()) {
+            ITree m = mappingStore.getNewTreeNode(c);
             if (m != null) seeds.add(m);
         }
-        List<TreeNode> candidates = new ArrayList<>();
-        Set<TreeNode> visited = new HashSet<>();
-        for (TreeNode seed: seeds) {
+        List<ITree> candidates = new ArrayList<>();
+        Set<ITree> visited = new HashSet<>();
+        for (ITree seed: seeds) {
             while (seed.getParent() != null) {
-                TreeNode parent = seed.getParent();
+                ITree parent = seed.getParent();
                 if (visited.contains(parent))
                     break;
                 visited.add(parent);
@@ -74,18 +74,18 @@ public class GreedyBottomUpMatcher extends Matcher{
         return candidates;
     }
 
-    protected double jaccardSimilarity(TreeNode oldNode, TreeNode newNode) {
+    protected double jaccardSimilarity(ITree oldNode, ITree newNode) {
         double num = (double) numberOfCommonDescendants(oldNode, newNode);
         double den = (double) oldNode.getDescendants().size() + (double) newNode.getDescendants().size() - num;
         return num / den;
     }
 
-    protected int numberOfCommonDescendants(TreeNode oldNode, TreeNode newNode) {
-        Set<TreeNode> dstDescendants = new HashSet<>(newNode.getDescendants());
+    protected int numberOfCommonDescendants(ITree oldNode, ITree newNode) {
+        Set<ITree> dstDescendants = new HashSet<>(newNode.getDescendants());
         int common = 0;
 
-        for (TreeNode t : oldNode.getDescendants()) {
-            TreeNode m = mappingStore.getNewTreeNode(t);
+        for (ITree t : oldNode.getDescendants()) {
+            ITree m = mappingStore.getNewTreeNode(t);
             if (m != null && dstDescendants.contains(m))
                 common++;
         }
@@ -93,9 +93,9 @@ public class GreedyBottomUpMatcher extends Matcher{
         return common;
     }
 
-    protected void lastChanceMatch(TreeNode oldNode, TreeNode newNode) {
-        TreeNode cOld = oldNode.deepCopy();
-        TreeNode cNew = newNode.deepCopy();
+    protected void lastChanceMatch(ITree oldNode, ITree newNode) {
+        ITree cOld = oldNode.deepCopy();
+        ITree cNew = newNode.deepCopy();
         removeMatched(cOld, true);
         removeMatched(cNew, false);
 
@@ -104,8 +104,8 @@ public class GreedyBottomUpMatcher extends Matcher{
             Matcher m = new ZsMatcher(cOld, cNew, new MappingStore());
             m.match();
             for (Mapping candidate: m.getMappings().asSet()) {
-                TreeNode left = srcIds.getTreeNode(candidate.getFirst().getId());
-                TreeNode right = dstIds.getTreeNode(candidate.getSecond().getId());
+                ITree left = srcIds.getTreeNode(candidate.getFirst().getId());
+                ITree right = dstIds.getTreeNode(candidate.getSecond().getId());
 
                 if (left.getId() == oldNode.getId() || right.getId() == newNode.getId()) {
 //                    System.err.printf("Trying to map already mapped source node (%d == %d || %d == %d)\n",
@@ -128,8 +128,8 @@ public class GreedyBottomUpMatcher extends Matcher{
         mappedNew.putTreeNodes(newNode);
     }
 
-    public TreeNode removeMatched(TreeNode node, boolean isOld) {
-        for (TreeNode t: node.getPreOrderTreeNodeList()) {
+    public ITree removeMatched(ITree node, boolean isOld) {
+        for (ITree t: node.getPreOrderTreeNodeList()) {
             if ((isOld && isOldMatched(t)) || ((!isOld) && isNewMatched(t))) {
                 if (t.getParent() != null) t.getParent().getChildren().remove(t);
                 t.setParent(null);
@@ -138,19 +138,19 @@ public class GreedyBottomUpMatcher extends Matcher{
         node.refresh();
         return node;
     }
-    boolean isOldMatched(TreeNode treeNode) {
+    boolean isOldMatched(ITree treeNode) {
         return mappedOld.contains(treeNode);
     }
-    boolean isNewMatched(TreeNode treeNode) {
+    boolean isNewMatched(ITree treeNode) {
         return mappedNew.contains(treeNode);
     }
 
-    public boolean isMappingAllowed(TreeNode src, TreeNode dst) {
+    public boolean isMappingAllowed(ITree src, ITree dst) {
         return src.isSameType(dst)
                 && !(isOldMatched(src) || isNewMatched(dst));
     }
 
-    protected void addMapping(TreeNode src, TreeNode dst) {
+    protected void addMapping(ITree src, ITree dst) {
         mappedOld.putTreeNode(src);
         mappedNew.putTreeNode(dst);
         super.addMapping(src, dst);

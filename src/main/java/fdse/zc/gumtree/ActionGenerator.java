@@ -1,4 +1,4 @@
-package fdse.zc.gumtree.java;
+package fdse.zc.gumtree;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -8,30 +8,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fdse.zc.gumtree.java.JavaTree;
+
 public class ActionGenerator {
-    private TreeNode oldRoot;
-    private TreeNode newRoot;
-    private TreeNode oldRootClone;
+    private ITree oldRoot;
+    private ITree newRoot;
+    private ITree oldRootClone;
     private MappingStore mappingStore;
     private MappingStore mappingStoreClone;
     private int lastId;
-    private Set<TreeNode> oldInOrder;
-    private Set<TreeNode> newInOrder;
-    private TIntObjectMap<TreeNode> oldRootMap;
-    private TIntObjectMap<TreeNode> oldRootMapClone;
+    private Set<ITree> oldInOrder;
+    private Set<ITree> newInOrder;
+    private TIntObjectMap<ITree> oldRootMap;
+    private TIntObjectMap<ITree> oldRootMapClone;
     private ArrayList<Action> actions = new ArrayList<>();
-    public ActionGenerator(TreeNode oldRoot, TreeNode newRoot, MappingStore mappingStore){
+    public ActionGenerator(ITree oldRoot, ITree newRoot, MappingStore mappingStore){
         this.oldRoot = oldRoot;
         this.newRoot = newRoot;
         this.oldRootClone = this.oldRoot.deepCopy();
 
         this.oldRootMap = new TIntObjectHashMap();
-        for(TreeNode node : this.oldRoot.getPreOrderTreeNodeList()){
+        for(ITree node : this.oldRoot.getPreOrderTreeNodeList()){
             this.oldRootMap.put(node.getId(), node);
         }
 
         this.oldRootMapClone = new TIntObjectHashMap();
-        for(TreeNode node : this.oldRootClone.getPreOrderTreeNodeList()){
+        for(ITree node : this.oldRootClone.getPreOrderTreeNodeList()){
             this.oldRootMapClone.put(node.getId(), node);
         }
 
@@ -43,20 +45,20 @@ public class ActionGenerator {
     }
 
     public List<Action> generate(){
-        TreeNode oldFakeRoot = TreeNode.fakeParentTreeNode(oldRootClone);
-        TreeNode newFakeRoot = TreeNode.fakeParentTreeNode(newRoot);
+        ITree oldFakeRoot = JavaTree.fakeParentTreeNode(oldRootClone);
+        ITree newFakeRoot = JavaTree.fakeParentTreeNode(newRoot);
 
         oldInOrder = new HashSet<>();
         newInOrder = new HashSet<>();
         lastId = oldRootClone.getSize() + 1;
         mappingStoreClone.link(oldFakeRoot, newFakeRoot);
-        for(TreeNode x : newRoot.getBreadthFirstTreeNodeList()){
-            TreeNode w = null;
-            TreeNode y = x.getParent();
-            TreeNode z = mappingStoreClone.getOldTreeNode(y);
+        for(ITree x : newRoot.getBreadthFirstTreeNodeList()){
+            ITree w = null;
+            ITree y = x.getParent();
+            ITree z = mappingStoreClone.getOldTreeNode(y);
             if(!mappingStoreClone.hasNewTreeNode(x)){
                 int k = findPos(x);
-                w = TreeNode.fakeParentTreeNode(null);
+                w = JavaTree.fakeParentTreeNode(null);
                 w.setId(newId());
 
                 Action ins = new Insert(x, oldRootMap.get(z.getId()), k);
@@ -69,7 +71,7 @@ public class ActionGenerator {
             } else{
                 w = mappingStoreClone.getOldTreeNode(x);
                 if (!x.equals(newRoot)) { // TODO => x != origDst // Case of the root
-                    TreeNode v = w.getParent();
+                    ITree v = w.getParent();
                     if (!w.getNodeLabel().equals(x.getNodeLabel())) {
                         actions.add(new Update(oldRootMap.get(w.getId()), x.getNodeLabel()));
                         w.setNodeLabel(x.getNodeLabel());
@@ -89,7 +91,7 @@ public class ActionGenerator {
             newInOrder.add(x);
             alignChildren(w, x);
         }
-        for (TreeNode w : oldRootClone.getPostOrderTreeNodeList()) {
+        for (ITree w : oldRootClone.getPostOrderTreeNodeList()) {
             if (!mappingStoreClone.hasOldTreeNode(w)) {
                 actions.add(new Delete(oldRootMap.get(w.getId())));
             }
@@ -97,18 +99,18 @@ public class ActionGenerator {
         return actions;
     }
 
-    private void alignChildren(TreeNode w, TreeNode x) {
+    private void alignChildren(ITree w, ITree x) {
         oldInOrder.removeAll(w.getChildren());
         newInOrder.removeAll(x.getChildren());
 
-        List<TreeNode> s1 = new ArrayList<>();
-        for (TreeNode c: w.getChildren())
+        List<ITree> s1 = new ArrayList<>();
+        for (ITree c: w.getChildren())
             if (mappingStoreClone.hasOldTreeNode(c))
                 if (x.getChildren().contains(mappingStoreClone.getNewTreeNode(c)))
                     s1.add(c);
 
-        List<TreeNode> s2 = new ArrayList<>();
-        for (TreeNode c: x.getChildren())
+        List<ITree> s2 = new ArrayList<>();
+        for (ITree c: x.getChildren())
             if (mappingStoreClone.hasNewTreeNode(c))
                 if (w.getChildren().contains(mappingStoreClone.getOldTreeNode(c)))
                     s2.add(c);
@@ -121,8 +123,8 @@ public class ActionGenerator {
             newInOrder.add(m.getSecond());
         }
 
-        for (TreeNode a : s1) {
-            for (TreeNode b: s2 ) {
+        for (ITree a : s1) {
+            for (ITree b: s2 ) {
                 if (mappingStore.has(a, b)) {
                     if (!lcs.contains(new Mapping(a, b))) {
                         //System.out.println("W: " + w);
@@ -144,26 +146,26 @@ public class ActionGenerator {
         }
     }
 
-    private int findPos(TreeNode x){
-        TreeNode parent = x.getParent();
-        List<TreeNode> siblings = parent.getChildren();
+    private int findPos(ITree x){
+        ITree parent = x.getParent();
+        List<ITree> siblings = parent.getChildren();
 
-        for(TreeNode c : siblings){
+        for(ITree c : siblings){
             if(newInOrder.contains(c)){
                 if(c.equals(x)) return 0;
                 else break;
             }
         }
         int xpos = x.getPositionInParent();
-        TreeNode v = null;
+        ITree v = null;
         for (int i = 0; i < xpos; i++) {
-            TreeNode c = siblings.get(i);
+            ITree c = siblings.get(i);
             if (newInOrder.contains(c)) v = c;
         }
 
         if (v == null) return 0;
 
-        TreeNode u = mappingStoreClone.getOldTreeNode(v);
+        ITree u = mappingStoreClone.getOldTreeNode(v);
 
         int upos = u.getPositionInParent();
 
@@ -174,7 +176,7 @@ public class ActionGenerator {
         return ++lastId;
     }
 
-    private List<Mapping> lcs(List<TreeNode> x, List<TreeNode> y) {
+    private List<Mapping> lcs(List<ITree> x, List<ITree> y) {
         int m = x.size();
         int n = y.size();
         List<Mapping> lcs = new ArrayList<>();
