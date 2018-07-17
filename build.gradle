@@ -45,3 +45,8 @@ task execute(type: JavaExec) {
   main = 'fdse.zc.DiffJava'
   classpath = sourceSets.main.runtimeClasspath
 }
+
+task fix(type: JavaExec) {
+  main = 'fdse.zc.fix.FixError'
+  classpath = sourceSets.main.runtimeClasspath
+}
