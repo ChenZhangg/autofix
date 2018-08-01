@@ -8,11 +8,16 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ITrackedNodePosition;
@@ -32,6 +37,8 @@ public class FixDiamond{
     String repoPath = "/Users/zhangchen/projects/projectanalysis/java-stellar-sdk/.git";
     GitRepo gitRepo = new GitRepo(repoPath);
     String fileContent = gitRepo.getFileContent("ebdba1e960536e34c006c62ebe025f33508c7198", "src/main/java/org/stellar/sdk/requests/OrderBookRequestBuilder.java");
+    //String fileContent = gitRepo.getFileContent("242abf15b5d1ceaa97d1213443aabd177ccc4e77", "src/main/java/org/stellar/sdk/requests/OrderBookRequestBuilder.java");
+
     //System.out.println(fileContent);
     Document document = new Document(fileContent);
     ASTParser parser = ASTParser.newParser(AST.JLS10);
@@ -76,7 +83,33 @@ public class FixDiamond{
         break;
       }
     }
-    VariableDeclarationStatement vds = 
+    VariableDeclarationStatement vds = (VariableDeclarationStatement)st;
+    System.out.println(vds.getType());
+    VariableDeclarationFragment vdf = (VariableDeclarationFragment)vds.fragments().get(0);
+    System.out.println(vdf);
+    Expression expression = vdf.getInitializer();
+    System.out.println(expression);
+    System.out.println(expression.getClass());
+    ClassInstanceCreation cic = (ClassInstanceCreation)expression;
+    ParameterizedType pt = (ParameterizedType)cic.getType();
+    List l = pt.typeArguments();
+    System.out.println(l.size());
+    AST ast = pt.getAST();
+    ASTRewrite rewrite = ASTRewrite.create(ast);
+    l.add(ast.newSimpleType(ast.newName("zc")));
+    TextEdit edits = rewrite.rewriteAST(document, null);
+    UndoEdit undo = null;
+    try {
+      undo = edits.apply(document);
+    } catch(MalformedTreeException e) {
+        e.printStackTrace();
+    } catch(BadLocationException e) {
+        e.printStackTrace();
+    }
+    System.out.println(document.get());
+    System.out.println(root);
+    //System.out.println(pt.typeArguments().get(0));
+
     /*
     Document document = new Document("import java.util.List;\nimport java.util.Map;\nimport java.util.Set;\nclass X {}\n");
     ASTParser parser = ASTParser.newParser(AST.JLS10);
