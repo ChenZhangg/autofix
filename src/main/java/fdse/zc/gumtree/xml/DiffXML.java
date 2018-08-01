@@ -7,7 +7,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import fdse.zc.GitRepo;
+import fdse.zc.git.GitRepo;
 
 public class DiffXML{
 

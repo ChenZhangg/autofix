@@ -47,6 +47,6 @@ task execute(type: JavaExec) {
 }
 
 task fix(type: JavaExec) {
-  main = 'fdse.zc.fix.FixError'
+  main = 'fdse.zc.fix.FixDiamond'
   classpath = sourceSets.main.runtimeClasspath
 }

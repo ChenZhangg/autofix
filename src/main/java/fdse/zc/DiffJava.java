@@ -2,6 +2,9 @@ package fdse.zc;
 
 import java.util.List;
 
+import org.eclipse.jdt.internal.core.nd.db.DBProperties;
+
+import fdse.zc.git.GitRepo;
 import fdse.zc.gumtree.Action;
 import fdse.zc.gumtree.ActionGenerator;
 import fdse.zc.gumtree.GreedyBottomUpMatcher;
@@ -14,12 +17,24 @@ import fdse.zc.gumtree.java.JdtTreeGenerator;
 
 public class DiffJava{
   public static void main(String[] args) throws Exception {
+    /*
+    >>>>>>>>>>>>>
+    dfgdgsdfs
+
+    fdbvfbdfb
+    DBPropertiesdfb
+    ??????????????????
+    i = 10;
+*/
+
+    /*
     DiffJava diff = new DiffJava();
     String repoPath = "/Users/zhangchen/projects/projectanalysis/dynjs/.git";
     String filePath = "src/main/java/org/dynjs/runtime/GlobalObject.java";
     String preCommit = "29dcbb74a5ef857b88116e6b30eaaeddc70703a3";
     String nextCommit = "4462b9831f3b003c224c20d5c5efa9304a2815fc";
     diff.diffFile(repoPath, filePath, preCommit, nextCommit);
+    */
   }
 
   public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
