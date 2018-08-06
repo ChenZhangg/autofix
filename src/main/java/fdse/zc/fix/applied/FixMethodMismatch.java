@@ -1,14 +1,22 @@
-package fdse.zc.fix;
+package fdse.zc.fix.applied;
 
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.text.BadLocationException;
+
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.UndoEdit;
 
 import fdse.zc.git.GitRepo;
 
@@ -27,9 +35,24 @@ public class FixMethodMismatch {
     MethodMismatchVisitor visitor = new MethodMismatchVisitor();
     root.accept(visitor);
     MethodInvocation methodInvocation = visitor.getMethodInvocation();
+    AST ast = methodInvocation.getAST();
+    ASTRewrite astRewrite = ASTRewrite.create(ast);
+    ListRewrite listRewrite = astRewrite.getListRewrite(methodInvocation, MethodInvocation.ARGUMENTS_PROPERTY);
     List list = methodInvocation.arguments();
-    list.forEach(System.out::println);
+    for(Object o : list){
+      //listRewrite.remove((ASTNode)o, null);
+    }
+    TextEdit edits = astRewrite.rewriteAST(document, null);
+    UndoEdit undo = null;
+    try {
+      undo = edits.apply(document);
+    } catch(MalformedTreeException e) {
+        e.printStackTrace();
+    }
+    System.out.println(document.get());
+    //List list = methodInvocation.arguments();
+    //list.forEach(System.out::println);
     //list.clear();
-    System.out.println(root);
+    //System.out.println(root);
   }
 }

@@ -47,6 +47,6 @@ task execute(type: JavaExec) {
 }
 
 task fix(type: JavaExec) {
-  main = 'fdse.zc.fix.FixMethodMismatch'
+  main = 'fdse.zc.fix.applied.FixMethodMismatch'
   classpath = sourceSets.main.runtimeClasspath
 }

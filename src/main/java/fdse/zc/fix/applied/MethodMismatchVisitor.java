@@ -1,4 +1,4 @@
-package fdse.zc.fix;
+package fdse.zc.fix.applied;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
