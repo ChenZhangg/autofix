@@ -44,6 +44,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.0-alpha-3'
+
+    // https://mvnrepository.com/artifact/org.apache.maven/maven-model
+    compile group: 'org.apache.maven', name: 'maven-model', version: '3.5.4'
 }
 
 // In this section you declare where to find the dependencies of your project
