@@ -1,6 +1,14 @@
 package fdse.zc.fix.symbol;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -18,7 +26,7 @@ import fdse.zc.git.GitRepo;
 
 public class FixImport{
   public static void main(String[] args) throws Exception {
-    FixImport.deleteImport();
+    FixImport.addImport();
   }
 
   public static void deleteImport() throws Exception {
@@ -56,6 +64,34 @@ public class FixImport{
         e.printStackTrace();
     }
     System.out.println(document.get());
+  }
+
+  public static void addImport() throws Exception{
+    String path = "/Users/zhangchen/projects/projectanalysis/test/cp.txt";
+    List<String> list = Files.readAllLines(Paths.get(path));
+    for(int i = 0; i < list.size(); i++){
+      String jarPath = list.get(i);
+      if(jarPath.endsWith("jar")){
+        searchJar(jarPath);
+      }
+      //System.out.println(list.get(i));
+    }
+  }
+
+  public static void searchJar(String jarPath) throws Exception{
+    JarFile jarFile = new JarFile(jarPath);
+    Enumeration<JarEntry> entries = jarFile.entries();
+    while (entries.hasMoreElements()) {
+      JarEntry jarEntry = entries.nextElement();
+      if(jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")){
+        continue;
+      }
+      String className = jarEntry.getName().substring(0, jarEntry.getName().length() - 6);
+      className = className.replace('/', '.');
+      if(className.endsWith("Document"))
+        System.out.println(className);
+    }
+    jarFile.close();
   }
 
 }
