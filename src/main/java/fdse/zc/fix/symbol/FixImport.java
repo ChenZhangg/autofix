@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -22,11 +23,12 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
+import fdse.zc.fix.Similarity;
 import fdse.zc.git.GitRepo;
 
 public class FixImport{
   public static void main(String[] args) throws Exception {
-    FixImport.addImport();
+    FixImport.changeImport();
   }
 
   public static void deleteImport() throws Exception {
@@ -72,13 +74,14 @@ public class FixImport{
     for(int i = 0; i < list.size(); i++){
       String jarPath = list.get(i);
       if(jarPath.endsWith("jar")){
-        searchJar(jarPath);
+        List<String> list2 = searchJar(jarPath);
       }
       //System.out.println(list.get(i));
     }
   }
 
-  public static void searchJar(String jarPath) throws Exception{
+  public static List<String> searchJar(String jarPath) throws Exception{
+    List<String> list = new ArrayList<>();
     JarFile jarFile = new JarFile(jarPath);
     Enumeration<JarEntry> entries = jarFile.entries();
     while (entries.hasMoreElements()) {
@@ -89,9 +92,26 @@ public class FixImport{
       String className = jarEntry.getName().substring(0, jarEntry.getName().length() - 6);
       className = className.replace('/', '.');
       if(className.endsWith("Document"))
-        System.out.println(className);
+        list.add(className);
     }
     jarFile.close();
+    return list;
   }
+
+  public static void changeImport() throws Exception{
+    String repoPath = "/Users/zhangchen/projects/projectanalysis/pinpoint/.git";
+    GitRepo gitRepo = new GitRepo(repoPath);
+    //String fileContent = gitRepo.getFileContent("f20c6c68a28c91c33e8c010fc23372366417fa4d", "plugins/httpclient4/src/main/java/com/navercorp/pinpoint/plugin/httpclient4/interceptor/CloseableHttpAsyncClientExecuteMethodWithHttpAsyncRequestProducerInterceptor.java");
+    List<String> list = gitRepo.getFileList("f20c6c68a28c91c33e8c010fc23372366417fa4d");
+    Similarity.identifierSimilarity("com.navercorp.pinpoint.bootstrap.context.AttributeScope.class", "com.navercorp.pinpoint.bootstrap.context.AttributeScoaabnhghgf.java");
+    //list.forEach(System.out::println);
+    //System.out.println(fileContent);
+    //Document document = new Document(fileContent);
+    //ASTParser parser = ASTParser.newParser(AST.JLS10);
+    //parser.setSource(document.get().toCharArray());
+    //CompilationUnit compilationUnit = (CompilationUnit)parser.createAST(null);
+   // List importList = compilationUnit.imports();
+  }
+
 
 }
