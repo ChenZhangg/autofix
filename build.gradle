@@ -63,6 +63,6 @@ task execute(type: JavaExec) {
 
 task fix(type: JavaExec) {
   //main = 'fdse.zc.fix.applied.FixMethodMismatch'
-  main = 'fdse.zc.fix.symbol.FixImport'
+  main = 'fdse.zc.fix.supertype.Inheritance'
   classpath = sourceSets.main.runtimeClasspath
 }
