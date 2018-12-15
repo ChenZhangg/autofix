@@ -1,0 +1,12 @@
+:clean
+:compileJava
+:processResources NO-SOURCE
+:classes
+:compileTestJava
+:processTestResources NO-SOURCE
+:testClasses
+:test
+:check
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed

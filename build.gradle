@@ -47,6 +47,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.maven/maven-model
     compile group: 'org.apache.maven', name: 'maven-model', version: '3.5.4'
+
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -63,6 +66,7 @@ task execute(type: JavaExec) {
 
 task fix(type: JavaExec) {
   //main = 'fdse.zc.fix.applied.FixMethodMismatch'
-  main = 'fdse.zc.fix.supertype.Inheritance'
+  //main = 'fdse.zc.fix.pack.Pack'
+  main = 'fdse.zc.Test'
   classpath = sourceSets.main.runtimeClasspath
 }

@@ -10,6 +10,6 @@ public class Update extends Action{
 
     @Override
     public String toString() {
-        return "Update " + node + "'s label to " + label;
+        return "Update " + node + "of type " + node.getNodeTypeNumber() +"'s label to " + label;
     }
 }

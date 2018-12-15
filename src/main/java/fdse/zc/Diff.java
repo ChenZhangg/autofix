@@ -28,7 +28,7 @@ public class Diff{
   }
 
   public static void main(String[] args) throws Exception {
-    Diff diff = new Diff("/Users/zhangchen/projects/projectanalysis/dynjs/.git", "29dcbb74a5ef857b88116e6b30eaaeddc70703a3", "4462b9831f3b003c224c20d5c5efa9304a2815fc");
+    Diff diff = new Diff("/Users/zhangchen/projects/autofix/repositories/mifos-mobile/.git", "3a59e016e7dbed2e4e64411379d55be705ca4c3c", "4462b9831f3b003c224c20d5c5efa9304a2815fc");
     diff.getFiles();
   }
 

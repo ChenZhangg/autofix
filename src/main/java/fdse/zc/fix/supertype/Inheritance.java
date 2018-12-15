@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
@@ -32,9 +33,11 @@ public class Inheritance {
     String commitSHA = "5755ea7ad982e3548cd61333daa155aef10d5a94";
     String filePath = "src/main/java/com/xiongbeer/cobweb/zk/resources/INodeDirectory.java";
     int lineNum = 32;
-    Inheritance.parents(gitRepoPath, commitSHA, filePath, lineNum);
+    Map<String, String> superMap = Inheritance.getSuperMap(gitRepoPath, commitSHA, filePath, lineNum);
+    Inheritance.getMethodSignature(gitRepoPath, commitSHA, superMap);
   }
-  public static void parents(String gitRepoPath, String commitSHA, String filePath, int wrongLineNum) throws Exception {
+
+  public static Map<String, String> getSuperMap(String gitRepoPath, String commitSHA, String filePath, int wrongLineNum) throws Exception {
     GitRepo gitRepo = new GitRepo(gitRepoPath);
     String fileContent = gitRepo.getFileContent(commitSHA, filePath);
     Document document = new Document(fileContent);
@@ -77,44 +80,43 @@ public class Inheritance {
     String packageName = compilationUnit.getPackage().getName().getFullyQualifiedName();
     for(String s : superMap.keySet()){
       if(superMap.get(s) == null){
-        superMap.put(s, packageName + s);
+        superMap.put(s, packageName + "." + s);
       }
     }
-
-    for(String s : superMap.keySet()){
-      System.out.println(superMap.get(s));
-    }
-
-    //System.out.println(compilationUnit.imports().get(0).getClass());
-
-
-    /*
-    Document document = new Document(fileContent);
-    ASTParser parser = ASTParser.newParser(AST.JLS10);
-    parser.setSource(document.get().toCharArray());
-    CompilationUnit compilationUnit = (CompilationUnit)parser.createAST(null);
-    AnnotionVisitor annotionVisitor = new AnnotionVisitor();
-    compilationUnit.accept(annotionVisitor);
-    FieldDeclaration fieldDeclaration = annotionVisitor.getFieldDeclaration();
-    AST ast = fieldDeclaration.getAST();
-    ASTRewrite rewrite = ASTRewrite.create(ast);
-    NormalAnnotation normalAnnotation = null;
-    for(Object o : fieldDeclaration.modifiers()){
-      if(o instanceof NormalAnnotation){
-        normalAnnotation = (NormalAnnotation)o;
-      }
-    }
-    rewrite.remove(normalAnnotation, null);
-    TextEdit edits = rewrite.rewriteAST(document, null);
-    UndoEdit undo = null;
-    try {
-      undo = edits.apply(document);
-    } catch(MalformedTreeException e) {
-        e.printStackTrace();
-    }
-    System.out.println(document.get());
-    */
+    return superMap;
   }
+
+  public static List<MethodDeclaration> getMethodSignature(String gitRepoPath, String commitSHA, Map<String, String> superMap)  throws Exception {
+    GitRepo gitRepo = new GitRepo(gitRepoPath);
+    List<String> fileList = gitRepo.getFileList(commitSHA);
+    Map<String, String> superFileMap = new LinkedHashMap<>();
+    for(String s : superMap.keySet()){
+      String fileName = superMap.get(s).replaceAll("\\.", "/") + ".java";
+      for(int j = 0; j < fileList.size(); j++){
+        if(fileList.get(j).endsWith(fileName)){
+          superFileMap.put(s, fileList.get(j));
+          break;
+        }
+      }
+    }
+    List<MethodDeclaration> result = new ArrayList<>();
+    for(String s : superFileMap.keySet()){
+      String superFilePath = superFileMap.get(s);
+      String fileContent = gitRepo.getFileContent(commitSHA, superFilePath);
+      Document document = new Document(fileContent);
+      ASTParser parser = ASTParser.newParser(AST.JLS10);
+      parser.setSource(document.get().toCharArray());
+      CompilationUnit compilationUnit = (CompilationUnit)parser.createAST(null);
+      MethodDeclarationVisitor mdVisitor = new MethodDeclarationVisitor();
+      compilationUnit.accept(mdVisitor);
+      List<MethodDeclaration> mdList = mdVisitor.getMethodDeclarationList();
+      result.addAll(mdList);
+    }
+    return result;
+  }
+
+  
+
   public static class TypeDeclarationVisitor extends ASTVisitor{
     private int wrongLineNum;
     private CompilationUnit cu;
@@ -145,5 +147,17 @@ public class Inheritance {
     }
   }
   
+  public static class MethodDeclarationVisitor extends ASTVisitor{
+    private List<MethodDeclaration> mdList = new ArrayList<>();
+    @Override
+    public boolean visit(MethodDeclaration node) {
+      mdList.add(node);
+      return super.visit(node);
+    }
+
+    public List<MethodDeclaration> getMethodDeclarationList(){
+      return mdList;
+    }
+  }
   
 }

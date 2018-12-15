@@ -60,6 +60,7 @@
 # ---------
 /incoming-distributions
 /intTestHomeDir
+/repositories
 
 # Logs
 # ----
