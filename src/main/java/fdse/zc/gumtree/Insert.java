@@ -14,4 +14,9 @@ public class Insert extends Action{
     public String toString() {
         return "Insert " + node + " under " + parent + "at" + pos;
     }
+
+    @Override
+    public ITree getNode() {
+      return node;
+    }
 }

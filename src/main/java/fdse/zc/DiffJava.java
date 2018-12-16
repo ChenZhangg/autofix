@@ -1,7 +1,12 @@
 package fdse.zc;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.internal.core.nd.db.DBProperties;
 
 import fdse.zc.git.GitRepo;
@@ -38,9 +43,15 @@ public class DiffJava{
   }
 
   public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
+    /*
     GitRepo repo = new GitRepo(repoPath);
     char[] oldCharArray = repo.getChars(oldCommit, filePath);
     char[] newCharArray = repo.getChars(newCommit, filePath);
+    */
+    String oldPath = Paths.get(System.getProperty("user.dir"), "files", "A.java").toString();
+    String newPath = Paths.get(System.getProperty("user.dir"), "files", "B.java").toString();
+    char[] oldCharArray = readCharArrayFromFile(oldPath);
+    char[] newCharArray = readCharArrayFromFile(newPath);
     ITree oldRoot = getRoot(oldCharArray);
     ITree newRoot = getRoot(newCharArray);
     MappingStore mappingStore = new MappingStore();
@@ -52,9 +63,38 @@ public class DiffJava{
     ActionGenerator g = new ActionGenerator(oldRoot, newRoot, mappingStore);
     g.generate();
     List<Action> actions = g.getActions();
+    Action temp = null;
     for(Action a : actions){
+      temp = a;
       System.out.println(a.toString());
     }
+    ITree iTree = temp.getNode();
+    while(iTree != null) {
+      ASTNode a = iTree.getASTNode();
+      System.out.println(a.getNodeType() + " " + a.getClass());
+      iTree = iTree.getParent();
+    }
+  }
+
+  public char[] readCharArrayFromFile(String filePath) {
+    String theString = "";
+
+    File file = new File(filePath);
+    Scanner scanner = null;
+    try {
+      scanner = new Scanner(file);
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+	}
+    
+    theString = scanner.nextLine();
+    while (scanner.hasNextLine()) {
+           theString = theString + "\n" + scanner.nextLine();
+    }
+    
+    char[] charArray = theString.toCharArray();
+    return charArray;
   }
 
   public ITree getRoot(char[] charArray){

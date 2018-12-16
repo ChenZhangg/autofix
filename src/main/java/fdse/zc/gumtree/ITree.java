@@ -3,6 +3,8 @@ package fdse.zc.gumtree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 /**
  * Interface to represent abstract syntax trees.
  */
@@ -95,6 +97,8 @@ public interface ITree {
     public int getHash();
 
     public int getPositionInParent();
+
+    public ASTNode getASTNode();
     /**
      * @return a boolean indicating if the tree has at least one child or not
      */

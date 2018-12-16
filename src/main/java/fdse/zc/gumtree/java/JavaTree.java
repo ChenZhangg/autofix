@@ -242,6 +242,10 @@ public class JavaTree implements ITree {
         return children;
     }
 
+    public ASTNode getASTNode() {
+      return astNode;
+    }
+
     public boolean isLeaf() {
         return getChildren().size() == 0;
     }

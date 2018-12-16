@@ -22,8 +22,8 @@ public class DiffXML{
 
   public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
     GitRepo repo = new GitRepo(repoPath);
-    char[] oldCharArray = repo.getChars(oldCommit, filePath);
-    char[] newCharArray = repo.getChars(newCommit, filePath);
+    char[] oldCharArray = repo.getFileChars(oldCommit, filePath);
+    char[] newCharArray = repo.getFileChars(newCommit, filePath);
     Reader oldReader = new StringReader(String.valueOf(oldCharArray));
     XMLReader xmlReader = XMLReaderFactory.createXMLReader();
     LineReader lineReader = new LineReader(oldReader);

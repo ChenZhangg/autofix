@@ -10,4 +10,9 @@ public class Delete extends Action {
     public String toString() {
         return "Delete " + node;
     }
+
+    @Override
+    public ITree getNode() {
+      return node;
+    }
 }
