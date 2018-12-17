@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
@@ -85,10 +86,12 @@ public class GitRepo{
     ArrayList<DiffEntry> list = new ArrayList<>();
     try(Git git = new Git(repository)){
       List<DiffEntry> diffs = git.diff()
-      .setShowNameAndStatusOnly(true)
       .setOldTree(prepareTreeParser(repository, oldCommitSHA))
       .setNewTree(prepareTreeParser(repository, newCommitSHA))
       .call();
+      RenameDetector rd = new RenameDetector(repository);
+      rd.addAll( diffs );
+      diffs = rd.compute();
       System.out.println("Found: " + diffs.size() + " differences");
       for (DiffEntry diff : diffs) {
         list.add(diff);
