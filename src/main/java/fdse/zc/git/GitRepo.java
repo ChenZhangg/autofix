@@ -85,6 +85,7 @@ public class GitRepo{
     ArrayList<DiffEntry> list = new ArrayList<>();
     try(Git git = new Git(repository)){
       List<DiffEntry> diffs = git.diff()
+      .setShowNameAndStatusOnly(true)
       .setOldTree(prepareTreeParser(repository, oldCommitSHA))
       .setNewTree(prepareTreeParser(repository, newCommitSHA))
       .call();
