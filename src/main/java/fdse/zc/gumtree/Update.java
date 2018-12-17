@@ -17,4 +17,8 @@ public class Update extends Action{
     public ITree getNode() {
       return node;
     }
+
+    public String getLabel() {
+      return label;
+    }
 }

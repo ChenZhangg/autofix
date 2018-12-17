@@ -82,8 +82,7 @@ public class GitRepo{
     return list;
   }
 
-  public ArrayList<DiffEntry> getChangedFiles(String oldCommitSHA, String newCommitSHA) throws IOException, GitAPIException{
-    ArrayList<DiffEntry> list = new ArrayList<>();
+  public List<DiffEntry> getChangedFiles(String oldCommitSHA, String newCommitSHA) throws IOException, GitAPIException{
     try(Git git = new Git(repository)){
       List<DiffEntry> diffs = git.diff()
       .setOldTree(prepareTreeParser(repository, oldCommitSHA))
@@ -93,14 +92,12 @@ public class GitRepo{
       rd.addAll( diffs );
       diffs = rd.compute();
       System.out.println("Found: " + diffs.size() + " differences");
-      for (DiffEntry diff : diffs) {
-        list.add(diff);
-        //System.out.println("Diff: " + diff.getChangeType() + ": " +
-        //          (diff.getOldPath().equals(diff.getNewPath()) ? diff.getNewPath() : diff.getOldPath() + " -> " + diff.getNewPath()));
+      for (DiffEntry entry : diffs) {
+        System.out.println("Entry: " + entry);
       }
+      return diffs;
     }
     
-    return list;
   }
   private AbstractTreeIterator prepareTreeParser(Repository repository, String objectId) throws IOException {
     try (RevWalk walk = new RevWalk(repository)) {

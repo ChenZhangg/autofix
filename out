@@ -1,12 +1,329 @@
-:clean
+Initialized native services in: /Users/zhangchen/.gradle/native
+The client will now receive all logging from the daemon (pid: 1563). The daemon log file: /Users/zhangchen/.gradle/daemon/4.6/daemon-1563.out.log
+Starting 30th build in daemon [uptime: 4 hrs 55 mins 38.288 secs, performance: 100%, no major garbage collections]
+Using 8 worker leases.
+Starting Build
+Settings evaluated using settings file '/Users/zhangchen/projects/autofix/settings.gradle'.
+Projects loaded. Root project using build file '/Users/zhangchen/projects/autofix/build.gradle'.
+Included projects: [root project 'autofix']
+Evaluating root project 'autofix' using build file '/Users/zhangchen/projects/autofix/build.gradle'.
+All projects evaluated.
+Selected primary task 'cleanTest' from project :
+Selected primary task 'test' from project :
+Tasks to be executed: [task ':cleanTest', task ':compileJava', task ':processResources', task ':classes', task ':compileTestJava', task ':processTestResources', task ':testClasses', task ':test']
+:cleanTest (Thread[Task worker for ':',5,main]) started.
+:cleanTest
+Task ':cleanTest' is not up-to-date because:
+  Task has not declared any outputs.
+:cleanTest (Thread[Task worker for ':',5,main]) completed. Took 0.002 secs.
+:compileJava (Thread[Task worker for ':',5,main]) started.
 :compileJava
+Task ':compileJava' is not up-to-date because:
+  Input property 'source' file /Users/zhangchen/projects/autofix/src/main/java/fdse/zc/util/ExtractDiffInfo.java has changed.
+Compiling with JDK Java compiler API.
+:compileJava (Thread[Task worker for ':',5,main]) completed. Took 0.228 secs.
+:processResources (Thread[Task worker for ':',5,main]) started.
+:processResources
+file or directory '/Users/zhangchen/projects/autofix/src/main/resources', not found
+Skipping task ':processResources' as it has no source files and no previous output files.
 :processResources NO-SOURCE
+:processResources (Thread[Task worker for ':',5,main]) completed. Took 0.0 secs.
+:classes (Thread[Task worker for ':',5,main]) started.
 :classes
+Skipping task ':classes' as it has no actions.
+:classes (Thread[Task worker for ':',5,main]) completed. Took 0.0 secs.
+:compileTestJava (Thread[Task worker for ':',5,main]) started.
 :compileTestJava
+Skipping task ':compileTestJava' as it is up-to-date.
+:compileTestJava UP-TO-DATE
+:compileTestJava (Thread[Task worker for ':',5,main]) completed. Took 0.006 secs.
+:processTestResources (Thread[Task worker for ':',5,main]) started.
+:processTestResources
+file or directory '/Users/zhangchen/projects/autofix/src/test/resources', not found
+Skipping task ':processTestResources' as it has no source files and no previous output files.
 :processTestResources NO-SOURCE
+:processTestResources (Thread[Task worker for ':',5,main]) completed. Took 0.0 secs.
+:testClasses (Thread[Task worker for ':',5,main]) started.
 :testClasses
+Skipping task ':testClasses' as it has no actions.
+:testClasses UP-TO-DATE
+:testClasses (Thread[Task worker for ':',5,main]) completed. Took 0.0 secs.
+:test (Thread[Task worker for ':',5,main]) started.
 :test
-:check
+Task ':test' is not up-to-date because:
+  Output property 'binResultsDir' file /Users/zhangchen/projects/autofix/build/test-results/test/binary has been removed.
+  Output property 'binResultsDir' file /Users/zhangchen/projects/autofix/build/test-results/test/binary/results.bin has been removed.
+  Output property 'binResultsDir' file /Users/zhangchen/projects/autofix/build/test-results/test/binary/output.bin.idx has been removed.
+Starting process 'Gradle Test Executor 24'. Working directory: /Users/zhangchen/projects/autofix Command: /Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/bin/java -Djava.security.manager=worker.org.gradle.process.internal.worker.child.BootstrapSecurityManager -Dorg.gradle.native=false -Dfile.encoding=UTF-8 -Duser.country=CN -Duser.language=zh -Duser.variant -ea -cp /Users/zhangchen/.gradle/caches/4.6/workerMain/gradle-worker.jar worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 24'
+Successfully started process 'Gradle Test Executor 24'
+Gradle Test Executor 24 started executing tests.
+
+fdse.zc.util.TestExtractDiffInfo > mifosMobile434Test STANDARD_ERROR
+    SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    SLF4J: Defaulting to no-operation (NOP) logger implementation
+    SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+fdse.zc.util.TestExtractDiffInfo > mifosMobile434Test STANDARD_OUT
+    package org.mifos.selfserviceapp.presenters;
+
+    import android.content.Context;
+
+    import org.mifos.selfserviceapp.R;
+    import org.mifos.selfserviceapp.api.DataManager;
+    import org.mifos.selfserviceapp.injection.ActivityContext;
+    import org.mifos.selfserviceapp.models.beneficary.BeneficiaryPayload;
+    import org.mifos.selfserviceapp.models.beneficary.BeneficiaryUpdatePayload;
+    import org.mifos.selfserviceapp.models.templates.beneficiary.BeneficiaryTemplate;
+    import org.mifos.selfserviceapp.presenters.base.BasePresenter;
+    import org.mifos.selfserviceapp.ui.views.BeneficiaryApplicationView;
+
+    import javax.inject.Inject;
+
+    import okhttp3.ResponseBody;
+    import rx.Subscriber;
+    import rx.android.schedulers.AndroidSchedulers;
+    import rx.schedulers.Schedulers;
+    import rx.subscriptions.CompositeSubscription;
+
+    /**
+     * Created by dilpreet on 16/6/17.
+     */
+
+    public class BeneficiaryApplicationPresenter extends BasePresenter<BeneficiaryApplicationView> {
+
+        private DataManager dataManager;
+        private CompositeSubscription subscription;
+
+        @Inject
+        public BeneficiaryApplicationPresenter(DataManager dataManager,
+                                               @ActivityContext Context context) {
+            super(context);
+            this.dataManager = dataManager;
+            subscription = new CompositeSubscription();
+        }
+
+        @Override
+        public void detachView() {
+            super.detachView();
+            subscription.clear();
+        }
+
+        public void showBeneficiaryTemplate() {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.getBeneficiaryTemplate()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<BeneficiaryTemplate>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_fetching_beneficiary_template));
+                        }
+
+                        @Override
+                        public void onNext(BeneficiaryTemplate beneficiaryTemplate) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryTemplate(beneficiaryTemplate);
+                        }
+                    }));
+        }
+
+        public void createBeneficiary(BeneficiaryPayload payload) {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.createBeneficiary(payload)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_creating_beneficiary));
+                        }
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryCreatedSuccessfully();
+                        }
+                    }));
+        }
+
+        public void updateBeneficiary(long beneficiaryId, BeneficiaryUpdatePayload payload) {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.updateBeneficiary(beneficiaryId, payload)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_updating_beneficiary));
+                        }
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryUpdatedSuccessfully();
+                        }
+                    }));
+        }
+    }
+
+    ==============
+    package org.mifos.selfserviceapp.presenters;
+
+    import android.content.Context;
+
+    import org.mifos.selfserviceapp.R;
+    import org.mifos.selfserviceapp.api.DataManager;
+    import org.mifos.selfserviceapp.injection.ActivityContext;
+    import org.mifos.selfserviceapp.models.beneficary.BeneficiaryPayload;
+    import org.mifos.selfserviceapp.models.beneficary.BeneficiaryUpdatePayload;
+    import org.mifos.selfserviceapp.models.templates.beneficiary.BeneficiaryTemplate;
+    import org.mifos.selfserviceapp.presenters.base.BasePresenter;
+    import org.mifos.selfserviceapp.ui.views.BeneficiaryApplicationView;
+
+    import javax.inject.Inject;
+
+    import okhttp3.ResponseBody;
+    import rx.Subscriber;
+    import rx.android.schedulers.AndroidSchedulers;
+    import rx.schedulers.Schedulers;
+    import rx.subscriptions.CompositeSubscription;
+
+    /**
+     * Created by dilpreet on 16/6/17.
+     */
+
+    public class BeneficiaryApplicationPresenter extends BasePresenter<BeneficiaryApplicationView> {
+
+        private DataManager dataManager;
+        private CompositeSubscription subscription;
+
+        @Inject
+        public BeneficiaryApplicationPresenter(DataManager dataManager,
+                                               @ActivityContext Context context) {
+            super(context);
+            this.dataManager = dataManager;
+            subscription = new CompositeSubscription();
+        }
+
+        @Override
+        public void detachView() {
+            super.detachView();
+            subscription.clear();
+        }
+
+        public void showBeneficiaryTemplate() {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.getBeneficiaryTemplate()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<BeneficiaryTemplate>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_fetching_beneficiary_template));
+                        }
+
+                        @Override
+                        public void onNext(BeneficiaryTemplate beneficiaryTemplate) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryTemplate(beneficiaryTemplate);
+                        }
+                    }));
+        }
+
+        public void createBeneficiary(BeneficiaryPayload payload) {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.createBeneficiary(payload)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_creating_beneficiary));
+                        }
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryCreatedSuccessfully();
+                        }
+                    }));
+        }
+
+        public void updateBeneficiary(long beneficiaryId, BeneficiaryUpdatePayload payload) {
+            checkViewAttached();
+            getMvpView().showProgress();
+            subscription.add(dataManager.updateBeneficiary(beneficiaryId, payload)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            getMvpView().hideProgress();
+                            getMvpView().showError(context
+                                    .getString(R.string.error_updating_beneficiary));
+                        }
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            getMvpView().hideProgress();
+                            getMvpView().showBeneficiaryUpdatedSuccessfully();
+                        }
+                    }));
+        }
+    }
+
+    []
+Gradle Test Executor 24 finished executing tests.
+Finished generating test XML results (0.0 secs) into: /Users/zhangchen/projects/autofix/build/test-results/test
+Generating HTML test report...
+Finished generating test html results (0.002 secs) into: /Users/zhangchen/projects/autofix/build/reports/tests/test
+:test (Thread[Task worker for ':',5,main]) completed. Took 1.207 secs.
 
 BUILD SUCCESSFUL in 1s
-4 actionable tasks: 4 executed
+4 actionable tasks: 3 executed, 1 up-to-date
+VCS Checkout Cache (/Users/zhangchen/projects/autofix/.gradle/vcsWorkingDirs) has not been cleaned up in 3 days

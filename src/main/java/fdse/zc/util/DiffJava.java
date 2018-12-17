@@ -1,15 +1,12 @@
-package fdse.zc;
+package fdse.zc.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.internal.core.nd.db.DBProperties;
 
-import fdse.zc.git.GitRepo;
 import fdse.zc.gumtree.Action;
 import fdse.zc.gumtree.ActionGenerator;
 import fdse.zc.gumtree.GreedyBottomUpMatcher;
@@ -21,59 +18,34 @@ import fdse.zc.gumtree.TreeContext;
 import fdse.zc.gumtree.java.JdtTreeGenerator;
 
 public class DiffJava{
-  public static void main(String[] args) throws Exception {
-    /*
-    >>>>>>>>>>>>>
-    dfgdgsdfs
 
-    fdbvfbdfb
-    DBPropertiesdfb
-    ??????????????????
-    i = 10;
-*/
+  private static DiffJava diffJava;
 
-    /*
-    DiffJava diff = new DiffJava();
-    String repoPath = "/Users/zhangchen/projects/projectanalysis/dynjs/.git";
-    String filePath = "src/main/java/org/dynjs/runtime/GlobalObject.java";
-    String preCommit = "29dcbb74a5ef857b88116e6b30eaaeddc70703a3";
-    String nextCommit = "4462b9831f3b003c224c20d5c5efa9304a2815fc";
-    diff.diffFile(repoPath, filePath, preCommit, nextCommit);
-    */
+  private DiffJava() { }
+
+  public static DiffJava getInstance() {
+    if(diffJava == null) {
+      diffJava = new DiffJava();
+    }
+    return diffJava;
   }
 
-  public void diffFile(String repoPath, String filePath, String oldCommit, String newCommit) throws Exception{
-    /*
-    GitRepo repo = new GitRepo(repoPath);
-    char[] oldCharArray = repo.getChars(oldCommit, filePath);
-    char[] newCharArray = repo.getChars(newCommit, filePath);
-    */
-    String oldPath = Paths.get(System.getProperty("user.dir"), "files", "A.java").toString();
-    String newPath = Paths.get(System.getProperty("user.dir"), "files", "B.java").toString();
-    char[] oldCharArray = readCharArrayFromFile(oldPath);
-    char[] newCharArray = readCharArrayFromFile(newPath);
-    ITree oldRoot = getRoot(oldCharArray);
-    ITree newRoot = getRoot(newCharArray);
+  public List<Action> diffFile(char[] oldChars,char[] newChars) throws Exception{
+    ITree oldRoot = getRoot(oldChars);
+    ITree newRoot = getRoot(newChars);
     MappingStore mappingStore = new MappingStore();
     new GreedySubtreeMatcher(oldRoot, newRoot, mappingStore).match();
     new GreedyBottomUpMatcher(oldRoot, newRoot, mappingStore).match();
-    for(Mapping m : mappingStore.asSet()){
+    //for(Mapping m : mappingStore.asSet()){
         //System.out.println(m);
-    }
+    //}
     ActionGenerator g = new ActionGenerator(oldRoot, newRoot, mappingStore);
     g.generate();
     List<Action> actions = g.getActions();
-    Action temp = null;
-    for(Action a : actions){
-      temp = a;
-      System.out.println(a.toString());
+    for(Action action : actions) {
+      System.out.println(action);
     }
-    ITree iTree = temp.getNode();
-    while(iTree != null) {
-      ASTNode a = iTree.getASTNode();
-      System.out.println(a.getNodeType() + " " + a.getClass());
-      iTree = iTree.getParent();
-    }
+    return actions;
   }
 
   public char[] readCharArrayFromFile(String filePath) {
