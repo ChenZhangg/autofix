@@ -44,4 +44,6 @@ public class TestExtractDiffInfo {
     //DiffJava df = DiffJava.getInstance();
     //df.diffFile(df.readCharArrayFromFile("/Users/zhangchen/projects/autofix/files/A.java"), df.readCharArrayFromFile("/Users/zhangchen/projects/autofix/files/B.java"));
   }
+
+
 }

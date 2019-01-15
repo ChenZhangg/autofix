@@ -13,14 +13,22 @@ import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 
 import fdse.zc.git.GitRepo;
 import fdse.zc.gumtree.Action;
+import fdse.zc.gumtree.Delete;
+import fdse.zc.gumtree.Insert;
+import fdse.zc.gumtree.Move;
 import fdse.zc.gumtree.Update;
 import fdse.zc.util.changes.Change;
+import fdse.zc.util.changes.UpdateClassName;
 import fdse.zc.util.changes.UpdateMethodName;
 
 public class ExtractDiffInfo {
@@ -50,12 +58,16 @@ public class ExtractDiffInfo {
     List<DiffEntry> diffList = gitRepo.getChangedFiles(oldCommitSHA, newCommitSHA);
     for(DiffEntry diff : diffList) {
       DiffEntry.ChangeType ct = diff.getChangeType();
-      if(ct == DiffEntry.ChangeType.MODIFY) {
+      if(ct == DiffEntry.ChangeType.ADD) {
+
+      } else if(ct == DiffEntry.ChangeType.COPY) {
+
+      } else if(ct == DiffEntry.ChangeType.DELETE) {
+
+      } else if(ct == DiffEntry.ChangeType.MODIFY) {
 
       } else if(ct == DiffEntry.ChangeType.RENAME) {
-        if(diff.getOldPath().endsWith(".java") || diff.getNewPath().endsWith(".java")) {
-          getFullClassName(oldCommitSHA, diff.getOldPath());
-        }
+
       }
     }
   }
@@ -67,53 +79,63 @@ public class ExtractDiffInfo {
     List<Change> changes = new ArrayList<>();
     char[] oldChars = gitRepo.getFileChars(oldCommitSHA, oldFilePath);
     char[] newChars = gitRepo.getFileChars(newCommitSHA, newFilePath);
+    String oldPackageName = getPackageName(oldChars);
+    String newPackageName = getPackageName(newChars);
     DiffJava diffJava = DiffJava.getInstance();
     List<Action> actions = diffJava.diffFile(oldChars, newChars);
-
     for(Action action : actions) {
-      if(action instanceof Update) {
-        changes.add(updateAction((Update)action, oldFilePath, newFilePath));
+      if(action instanceof Delete) {
+
+      } else if(action instanceof Insert) {
+
+      }  else if(action instanceof Move) {
+
+      } else if(action instanceof Update) {
+        changes.add(updateAction((Update)action, oldFilePath, oldPackageName, newFilePath, newPackageName));
       }     
     }
     return changes;
   }
 
-  private Change updateAction(Update action, String oldFilePath, String newFilePath) {
+  private Change updateAction(Update action, String oldFilePath, String oldPackageName, String newFilePath, String newPackageName) {
     Change c = null;
-    ASTNode parentAstNode = action.getNode().getParent().getASTNode();
-    if(parentAstNode instanceof MethodDeclaration) {
-      MethodDeclaration mdParent = (MethodDeclaration)parentAstNode;
+    ASTNode node = action.getNode().getASTNode();
+    ASTNode parentNode = action.getNode().getParent().getASTNode();
+    String label = action.getLabel();
+    if(node instanceof SimpleName) {
+      if(parentNode instanceof TypeDeclaration){
+        c = new UpdateClassName(oldPackageName + node.toString(), oldFilePath, newPackageName + label, newFilePath);
+      }
+    } else if(node instanceof Modifier) {
+
+    } else if(node instanceof QualifiedName) {
+      if(parentNode instanceof PackageDeclaration){
+        c = new UpdateClassName(node.toString(), oldFilePath, label, newFilePath);
+      }
+    }
+
+    if(parentNode instanceof MethodDeclaration) {
+      MethodDeclaration mdParent = (MethodDeclaration)parentNode;
       if(mdParent.getName() == action.getNode().getASTNode()) {
         c = new UpdateMethodName(mdParent.getName().toString(), oldFilePath, action.getLabel(), newFilePath);
-      } else {
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<");
       }
+    } else if(parentNode instanceof TypeDeclaration  ) {
+      //CompilationUnit cu = (CompilationUnit)parentAstNode;
+      //if(mdParent.getName() == action.getNode().getASTNode()) {
     }
     return c;
   }
 
-  private String getFullClassName(String commitSHA, String filePath) throws Exception {
+  private String getPackageName(String commitSHA, String filePath) throws Exception {
     char[] chars = gitRepo.getFileChars(commitSHA, filePath);
-    ASTParser parser = ASTParser.newParser(AST.JLS10);
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-    parser.setResolveBindings(true);
-    parser.setEnvironment(null, null, null, true);
-    Map<String, String> options = JavaCore.getOptions();
-    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_10);
-    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_10);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-    options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-    parser.setCompilerOptions(options);
-    parser.setSource(chars);
-    CompilationUnit astRoot = (CompilationUnit)parser.createAST(null);
-    String pack = astRoot.getPackage().getName().getFullyQualifiedName();
-    List list = astRoot.types();
-    for(Object o : list) {
-      AbstractTypeDeclaration atd = (AbstractTypeDeclaration)o;
-      System.out.println(pack + "." + atd.getName().getFullyQualifiedName());
-    }
-    return null;
+    return getPackageName(chars);
   }
 
+  private String getPackageName(char[] chars) throws Exception {
+    ParseJava pj = ParseJava.getInstance();
+    CompilationUnit astRoot = pj.pareChars(chars);
+    String pack = astRoot.getPackage().getName().getFullyQualifiedName();
+    return pack;
+  }
 
 }

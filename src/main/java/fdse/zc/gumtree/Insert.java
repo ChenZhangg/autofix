@@ -12,7 +12,7 @@ public class Insert extends Action{
 
     @Override
     public String toString() {
-        return "Insert " + node + " under " + parent + "at" + pos;
+        return "Insert " + node + " under " + parent.getASTNode().getClass() + "at" + pos;
     }
 
     @Override

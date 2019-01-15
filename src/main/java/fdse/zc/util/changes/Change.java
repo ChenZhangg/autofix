@@ -5,6 +5,7 @@ import java.util.Objects;
 public abstract class Change {
   public static final int UPDATE_METHOD_NAME = 1;
   public static final int UPDATE_CLASS_NAME = 2;
+  public static final int UPDATE_PACKAGE_NAME = 2;
 
   protected int type;
   protected String oldName;
