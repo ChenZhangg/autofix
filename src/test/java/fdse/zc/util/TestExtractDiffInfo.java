@@ -13,7 +13,7 @@ import org.junit.Test;
 import fdse.zc.util.changes.Change;
 
 public class TestExtractDiffInfo {
-
+/*
   @Test
   @Ignore
   public void mifosMobile434Test() throws Exception {
@@ -45,5 +45,5 @@ public class TestExtractDiffInfo {
     //df.diffFile(df.readCharArrayFromFile("/Users/zhangchen/projects/autofix/files/A.java"), df.readCharArrayFromFile("/Users/zhangchen/projects/autofix/files/B.java"));
   }
 
-
+*/
 }

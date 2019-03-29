@@ -52,7 +52,7 @@ dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 
     // https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.ui
-    compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.ui', version: '3.16.0'
+    //compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.ui', version: '3.16.0'
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -68,6 +68,12 @@ task execute(type: JavaExec) {
   main = 'Library'
   classpath = sourceSets.main.runtimeClasspath
 }
+
+gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" //<< "-Werror"
+        }
+    }
 
 task fix(type: JavaExec) {
   //main = 'fdse.zc.fix.applied.FixMethodMismatch'

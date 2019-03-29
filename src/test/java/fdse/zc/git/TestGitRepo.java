@@ -10,6 +10,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.junit.Test;
 
 public class TestGitRepo {
+  /*
   @Test
   public void mifosMobile438Test() throws IOException, GitAPIException {
     String oldCommitSHA = "3a59e016e7db";
@@ -33,5 +34,5 @@ public class TestGitRepo {
     }
   }
 
-
+*/
 }
