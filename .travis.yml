@@ -1,3 +1,3 @@
 language: java
 warnings_are_errors: false
-install: ./travis/install.sh
+install: chmod 777 ./travis/install.sh  && ./travis/install.sh
