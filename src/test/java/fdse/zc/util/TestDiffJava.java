@@ -18,6 +18,7 @@ import fdse.zc.gumtree.Update;
 public class TestDiffJava {
   private void traverseParents(Action action) {
     traverseParents(action.getNode().getASTNode());
+    erwrwewecwcwc
   }
 
   private void traverseParents(ASTNode node) {
