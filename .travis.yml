@@ -1,2 +1,4 @@
 language: java
 warnings_are_errors: false
+install:
+  ./travis/insrall.sh
