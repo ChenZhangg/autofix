@@ -1,3 +1,3 @@
 #!/bin/bash
-../gradlew test
+./gradlew test
 exit 0
